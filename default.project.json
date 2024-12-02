@@ -6,6 +6,12 @@
     "ReplicatedStorage": {
       "Shared": {
         "$path": "src/shared"
+      },
+      "Prefabs": {
+        "$className": "Folder",
+        "Camera": {
+          "$className": "Folder"
+        }
       }
     },
 
