@@ -8,3 +8,4 @@ local client = shared.Client
 local Camera = require(client.Camera)
 
 
+Camera.initialise()

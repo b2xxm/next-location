@@ -22,11 +22,11 @@ local camera: Camera = workspace.CurrentCamera
 local Camera = {}
 
 
-local function initialise(): ()
+function Camera.initialise(): ()
 	local player = Players.LocalPlayer
     local focusPartPrefab = prefabs.Camera:WaitForChild("FocusPart")
 	
-	character = player.CharacterAdded:Wait()
+	character = player.Character or player.CharacterAdded:Wait()
 	focusPart = focusPartPrefab:Clone()
 	
 	camera.CameraType = Enum.CameraType.Track
@@ -58,9 +58,6 @@ function Camera.refresh(newCharacter: Model): ()
 	focusPart.CFrame = head.CFrame
 	camera.CameraSubject = focusPart
 end
-
-
-initialise()
 
 
 return Camera
