@@ -1,5 +1,5 @@
 # next location
-game inpired based on moral argument, in the game hotline miami
+game inpired by hotline miami
 
 features:
 - isometric camera
