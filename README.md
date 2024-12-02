@@ -1,5 +1,5 @@
 # next location
-game inpired by hotline miami
+game inspired by hotline miami
 
 features:
 - isometric camera
