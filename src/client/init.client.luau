@@ -6,6 +6,7 @@ local client = shared.Client
 
 
 local Camera = require(client.Camera)
+local MouseAim = require(client.MouseAim)
 
 
 Camera.initialise()
