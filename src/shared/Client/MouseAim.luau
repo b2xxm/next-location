@@ -8,6 +8,7 @@ local RunService = game:GetService("RunService")
 local player: Player = Players.LocalPlayer
 local character: Model? = player.Character
 local camera: Camera = workspace.CurrentCamera
+local priority: number = 2000
 
 local raycastParams: RaycastParams = RaycastParams.new()
 raycastParams.RespectCanCollide = false
@@ -36,6 +37,12 @@ local function update(_deltaTime: number): ()
 end
 
 
+function MouseAim.initialise(): ()
+    player.CharacterAdded:Connect(refreshCharacter)
+    RunService:BindToRenderStep("DirectionUpdate", priority, update)
+end
+
+
 function MouseAim.mouseMoved(target: Vector3): ()
     if not character or not character.Parent then
         return
@@ -47,10 +54,6 @@ function MouseAim.mouseMoved(target: Vector3): ()
 
     rootPart.CFrame = CFrame.lookAlong(rootPart.Position, xzDirection)
 end
-
-
-player.CharacterAdded:Connect(refreshCharacter)
-RunService:BindToRenderStep("test", 2000, update)
 
 
 return MouseAim
