@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 
 
 local player: Player = Players.LocalPlayer
-local character: Model? = player.Character
+local character: Model? = player.Character or player.CharacterAdded:Wait()
 local camera: Camera = workspace.CurrentCamera
 local priority: number = 2000
 

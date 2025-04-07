@@ -29,6 +29,10 @@ local function inputBegan(input: InputObject, processedEvent: boolean): ()
 
     local keyCode = if input.KeyCode ~= Enum.KeyCode.Unknown then input.KeyCode else input.UserInputType
     local registry = register[keyCode]
+    
+    if not registry then
+        return
+    end
 
     for name, callback in registry do
         if not actionStatus[name] then
