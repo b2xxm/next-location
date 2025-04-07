@@ -11,7 +11,7 @@ local Types = require(shared.Types)
 
 
 type InputType = Types.InputType
-type Registry = { [string]: () -> () }
+type Registry = { [string]: (input: InputObject) -> () }
 type Register = { [InputType]: Registry }
 
 
@@ -22,7 +22,7 @@ local actionStatus: { [string]: boolean } = {}
 local Input = {}
 
 
-local function inputBegan(input: InputObject, processedEvent: boolean): ()
+local function input(input: InputObject, processedEvent: boolean): ()
     if processedEvent then
         return
     end
@@ -39,17 +39,18 @@ local function inputBegan(input: InputObject, processedEvent: boolean): ()
             continue
         end
 
-        callback()
+        callback(input)
     end
 end
 
 
 function Input.initialise(): ()
-    UserInputService.InputBegan:Connect(inputBegan)
+    UserInputService.InputBegan:Connect(input)
+    UserInputService.InputEnded:Connect(input)
 end
 
 
-function Input.register(name: string, callback: () -> (), ...: Enum.KeyCode | Enum.UserInputType): ()
+function Input.register(name: string, callback: (input: InputObject) -> (), ...: Enum.KeyCode | Enum.UserInputType): ()
     local keyCodes = { ... }
 
     if #keyCodes == 0 then
