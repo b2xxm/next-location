@@ -5,9 +5,6 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
 
-local PRIORITY: number = 2000
-
-
 local player: Player = Players.LocalPlayer
 local character: Model? = player.Character or player.CharacterAdded:Wait()
 local camera: Camera = workspace.CurrentCamera
@@ -41,7 +38,9 @@ end
 
 function MouseAim.initialise(): ()
     player.CharacterAdded:Connect(refreshCharacter)
-    RunService:BindToRenderStep("DirectionUpdate", PRIORITY, update)
+    RunService:BindToRenderStep("DirectionUpdate", Enum.RenderPriority.Last.Value, update)
+    
+    raycastParams.FilterDescendantsInstances = { character :: Model }
 end
 
 
