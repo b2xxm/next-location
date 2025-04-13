@@ -11,6 +11,9 @@
         "$className": "Folder",
         "Camera": {
           "$className": "Folder"
+        },
+        "Stratagem": {
+          "$className": "Folder"
         }
       }
     },
