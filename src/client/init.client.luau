@@ -8,12 +8,12 @@ local client = shared.Client
 local Input = require(client.Input)
 local Camera = require(client.Camera)
 local MouseAim = require(client.MouseAim)
-local Stratagems = require(client.Stratagems)
+local Stratagem = require(client.Stratagem)
 
 
 Input.initialise()
 Camera.initialise()
 MouseAim.initialise()
-Stratagems.initialise()
+Stratagem.initialise()
 
-Stratagems.load({ 1, 2, 3 }) -- temporary
+Stratagem.load({ "TEST", "SEQUENCE 2", "SCAN" }) -- temporary

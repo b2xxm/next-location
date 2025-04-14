@@ -33,7 +33,7 @@ local characterIndex: number = 1
 local selected: string? = nil
 
 
-local Stratagems = {}
+local Stratagem = {}
 
 
 local function toggleMenu(enabled: boolean): ()
@@ -122,7 +122,7 @@ local function sequenceInput(input: InputObject): ()
 end
 
 
-function Stratagems.initialise(): ()
+function Stratagem.initialise(): ()
     local function toggleMenuInput(input: InputObject)
         if input.UserInputState == Enum.UserInputState.Begin then
             toggleMenu(true)
@@ -141,8 +141,8 @@ function Stratagems.initialise(): ()
 end
 
 
-function Stratagems.load(stratagemIds: { number }): ()
-    if #stratagemIds > CAPACITY then
+function Stratagem.load(stratagems: { string }): ()
+    if #stratagems > CAPACITY then
         error("exceeds stratagem capacity")
     end
 
@@ -159,14 +159,14 @@ function Stratagems.load(stratagemIds: { number }): ()
         instance:Destroy()
     end
 
-    for _, id in stratagemIds do
-        local stratagem = StratagemList[id]
-        sequences[stratagem.name] = stratagem.sequence
+    for _, name in stratagems do
+        local stratagem = StratagemList[name]
+        sequences[name] = stratagem.sequence
 
         local template = templatePrefab:Clone()
         local label = template:FindFirstChild("NameLabel") :: TextLabel
-        template.Name = stratagem.name
-        label.Text = stratagem.name
+        template.Name = name
+        label.Text = name
 
         local sequenceContainer = template:FindFirstChild("Sequence")
 
@@ -183,4 +183,4 @@ function Stratagems.load(stratagemIds: { number }): ()
 end
 
 
-return Stratagems
+return Stratagem
