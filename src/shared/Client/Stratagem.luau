@@ -24,6 +24,7 @@ local characterPrefab: TextLabel = prefabs.Stratagem.Character
 local templatePrefab: Frame = prefabs.Stratagem.Template
 
 local menuKeyCode: InputType = Enum.KeyCode.LeftControl
+local activateKeyCode: InputType = Enum.KeyCode.F
 local sequenceKeyCodes: { InputType } = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
 
 
@@ -37,6 +38,10 @@ local Stratagem = {}
 
 
 local function toggleMenu(enabled: boolean): ()
+    if enabled and selected then
+        return
+    end
+
     local stratagemGui = Player.getInterface("StrategemMenu")
     local container = stratagemGui:FindFirstChild("Container") :: Frame
 
@@ -50,7 +55,6 @@ local function toggleMenu(enabled: boolean): ()
     end
     
     characterIndex = 1
-    selected = nil -- temporary (only clear when selected is used)
 
     table.clear(validSequences)
 
@@ -92,10 +96,10 @@ local function sequenceInput(input: InputObject): ()
     for key, sequence in validSequences do
         count += 1
 
-        local stratagemFrame = container:FindFirstChild(key) :: Frame
-        local sequenceContainer = stratagemFrame:FindFirstChild("Sequence") :: Frame
-
         if character == sequence[characterIndex] then
+            local stratagemFrame = container:FindFirstChild(key) :: Frame
+            local sequenceContainer = stratagemFrame:FindFirstChild("Sequence") :: Frame
+
             local characterLabel = sequenceContainer:FindFirstChild(tostring(characterIndex)) :: TextLabel
             characterLabel.TextTransparency = 0
 
@@ -128,15 +132,34 @@ function Stratagem.initialise(): ()
             toggleMenu(true)
 
         elseif input.UserInputState == Enum.UserInputState.End then
-            print(selected)
+            if selected then
+                Input.toggle("ActivateStratagem", true)
+            end
 
             toggleMenu(false)
         end
     end
 
+    local function activate(input: InputObject)
+        if selected == nil then
+            return
+        end
+
+        print(selected, "activated")
+
+        local stratagem = StratagemList[selected]
+        stratagem.callback()
+
+        selected = nil
+
+        Input.toggle("ActivateStratagem", false)
+    end
+
     Input.register("StratagemMenu", toggleMenuInput, menuKeyCode)
     Input.register("StratagemSequence", sequenceInput, table.unpack(sequenceKeyCodes))
+    Input.register("ActivateStratagem", activate, activateKeyCode)
 
+    Input.toggle("ActivateStratagem", false)
     toggleMenu(false)
 end
 
