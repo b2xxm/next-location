@@ -4,10 +4,12 @@ local Players = game:GetService("Players")
 
 
 local SEPERATOR: string = "_"
-local TRANSPARENCY: number = 0.8
+local TRANSPARENCY: number = 0.9
+local POLL_INTERVAL: number = 0.1
 
 
 local currentRegion: BasePart? = nil
+local bufferedRegion: BasePart? = nil
 local regions: { [BasePart]: boolean } = {}
 local currentMap: Model = nil
 
@@ -48,8 +50,6 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
             if tonumber(floor) :: number > currentFloor or tonumber(room) :: number >= currentRoom then
                 transparency = TRANSPARENCY
             end
-
-            print(room, currentRoom, transparency)
             
             for _, instance in roomFolder:GetChildren() do
                 -- assume instance is basepart for now
@@ -66,7 +66,7 @@ end
 
 local function poll(character: Model, region: BasePart): ()
     while true do
-        task.wait(0.2)
+        task.wait(POLL_INTERVAL)
 
         if not isTouching(character, region) then
             break
@@ -74,12 +74,24 @@ local function poll(character: Model, region: BasePart): ()
     end
     
     regions[region] = false
-    
-    if region == currentRegion then
-        currentRegion = nil
+
+    if bufferedRegion ~= nil and isTouching(character, bufferedRegion) then
+        local floor, room = bufferedRegion.Name:match("(%d+).(%d+)")
+
+        handleTransparency(tonumber(floor) :: number, tonumber(room) :: number)
+        task.spawn(poll, character, bufferedRegion)
         
-        handleTransparency(math.huge, math.huge)
+        currentRegion = bufferedRegion
+        regions[bufferedRegion] = true
+        bufferedRegion = nil
+        
+        return
     end
+    
+    currentRegion = nil
+    bufferedRegion = nil
+
+    handleTransparency(math.huge, math.huge)
 end
 
 
@@ -113,9 +125,19 @@ function Regions.load(map: Model): ()
                 return
             end
 
-            regions[region] = true
-            currentRegion = region
+            if currentRegion ~= nil and currentRegion ~= region then
+                if region == bufferedRegion then
+                    return
+                end
+
+                bufferedRegion = region
+
+                return
+            end
             
+            currentRegion = region
+            regions[region] = true
+
             handleTransparency(tonumber(floor) :: number, tonumber(room) :: number)
             task.spawn(poll, character, region)
         end
