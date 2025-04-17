@@ -9,6 +9,7 @@ local SHADOW_TRANSPARENCY: number = 0.3
 local POLL_INTERVAL: number = 0.05
 
 
+local player: Player = Players.LocalPlayer
 local currentRegion: BasePart? = nil
 local bufferedRegion: BasePart? = nil
 local regions: { [BasePart]: boolean } = {}
@@ -18,11 +19,11 @@ local currentMap: Model = nil
 local Regions = {}
 
 
-local function isTouching(character: Model, region: BasePart): boolean
+local function isTouching(region: BasePart): boolean
     local parts = workspace:GetPartsInPart(region)
 
     for _, part in parts do
-        if part:IsDescendantOf(character) then
+        if part:IsDescendantOf(player.Character) then
             return true
         end
     end
@@ -114,9 +115,11 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
 end
 
 
-local function poll(character: Model, region: BasePart): ()
+local function poll(): ()
+    local region = currentRegion :: BasePart
+
     while true do
-        if not isTouching(character, region) then
+        if not isTouching(region) then
             break
         end
         
@@ -125,15 +128,15 @@ local function poll(character: Model, region: BasePart): ()
     
     regions[region] = false
 
-    if bufferedRegion ~= nil and isTouching(character, bufferedRegion) then
+    if bufferedRegion ~= nil and isTouching(bufferedRegion) then
         local floor, room = bufferedRegion.Name:match("(%d+).(%d+)")
 
-        handleTransparency(tonumber(floor) :: number, tonumber(room) :: number)
-        task.spawn(poll, character, bufferedRegion)
-        
         currentRegion = bufferedRegion
         regions[bufferedRegion] = true
         bufferedRegion = nil
+
+        handleTransparency(tonumber(floor) :: number, tonumber(room) :: number)
+        task.spawn(poll)
         
         return
     end
@@ -163,15 +166,7 @@ function Regions.load(map: Model): ()
                 return
             end
 
-            local character = hit:FindFirstAncestorOfClass("Model")
-
-            if not character then
-                return
-            end
-
-            local player = Players:GetPlayerFromCharacter(character)
-
-            if not player then
+            if not hit:IsDescendantOf(player.Character :: Model) then
                 return
             end
 
@@ -192,7 +187,7 @@ function Regions.load(map: Model): ()
 
             task.wait(0.2) -- arbitrary wait time before polling
 
-            task.spawn(poll, character, region)
+            task.spawn(poll)
         end
 
         region.Touched:Connect(touched)
