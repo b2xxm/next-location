@@ -5,7 +5,8 @@ local Players = game:GetService("Players")
 
 local SEPERATOR: string = "_"
 local TRANSPARENCY: number = 0.9
-local POLL_INTERVAL: number = 0.1
+local SHADOW_TRANSPARENCY: number = 0.3
+local POLL_INTERVAL: number = 0.05
 
 
 local currentRegion: BasePart? = nil
@@ -32,10 +33,22 @@ end
 
 local function handleTransparency(currentFloor: number, currentRoom: number): ()
     for _, floorFolder in currentMap:GetChildren() do
-        local floor= floorFolder.Name:match(`(%d){ SEPERATOR }.+`)
+        local floor = floorFolder.Name:match(`(%d){ SEPERATOR }.+`)
 
         if not floor then
             continue
+        end
+
+        local shadows = floorFolder:FindFirstChild("Shadows")
+
+        if shadows then
+            for _, shadow in shadows:GetChildren() do
+                if not shadow:IsA("BasePart") then
+                    continue
+                end
+
+                shadow.Transparency = SHADOW_TRANSPARENCY
+            end
         end
 
         for _, roomFolder in floorFolder:GetChildren() do
@@ -45,11 +58,9 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
                 continue
             end
 
-            local transparency = 0
-
-            if tonumber(floor) :: number > currentFloor or tonumber(room) :: number >= currentRoom then
-                transparency = TRANSPARENCY
-            end
+            local floorNumber, roomNumber = tonumber(floor) :: number, tonumber(room) :: number
+            local shouldHide = floorNumber > currentFloor or roomNumber >= currentRoom
+            local isInRoom = floorNumber == currentFloor and roomNumber == currentRoom
             
             for _, instance in roomFolder:GetChildren() do
                 -- assume instance is basepart for now
@@ -57,8 +68,21 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
                     continue
                 end
 
-                instance.Transparency = transparency
+                instance.Transparency = if shouldHide then TRANSPARENCY else 0
             end
+
+            if not isInRoom then
+                continue
+            end
+
+            local shadowValue = roomFolder:FindFirstChild("Shadow") :: ObjectValue
+
+            if not shadowValue then
+                continue
+            end
+
+            local shadowPart = shadowValue.Value :: BasePart
+            shadowPart.Transparency = 1
         end
     end
 end
@@ -66,11 +90,11 @@ end
 
 local function poll(character: Model, region: BasePart): ()
     while true do
-        task.wait(POLL_INTERVAL)
-
         if not isTouching(character, region) then
             break
         end
+        
+        task.wait(POLL_INTERVAL)
     end
     
     regions[region] = false
@@ -139,6 +163,9 @@ function Regions.load(map: Model): ()
             regions[region] = true
 
             handleTransparency(tonumber(floor) :: number, tonumber(room) :: number)
+
+            task.wait(0.2) -- arbitrary wait time before polling
+
             task.spawn(poll, character, region)
         end
 
