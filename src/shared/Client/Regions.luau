@@ -1,6 +1,14 @@
 --!strict
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+
+
+local shared = ReplicatedStorage.Shared
+local client = shared.Client
+
+
+local TweenUtils = require(client.TweenUtils)
 
 
 local SEPERATOR: string = "_"
@@ -8,8 +16,10 @@ local TRANSPARENCY: number = 0.8
 local SHADOW_TRANSPARENCY: number = 0.3
 local POLL_INTERVAL: number = 0.05
 
-
 local player: Player = Players.LocalPlayer
+local tweenInfo: TweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+
+
 local currentRegion: BasePart? = nil
 local bufferedRegion: BasePart? = nil
 local regions: { [BasePart]: boolean } = {}
@@ -32,6 +42,20 @@ local function isTouching(region: BasePart): boolean
 end
 
 
+local function tweenTransparency(instance: BasePart, transparency: number): ()
+    if instance.Transparency == transparency then
+        return
+    end
+
+    TweenUtils.cancel(instance)
+
+    local goal = { Transparency = transparency }
+    local tween = TweenUtils.create(instance, tweenInfo, goal)
+
+    tween:Play()
+end
+
+
 local function handleTransparency(currentFloor: number, currentRoom: number): ()
     for _, floorFolder in currentMap:GetChildren() do
         local floor = floorFolder.Name:match(`(%d){ SEPERATOR }.+`)
@@ -48,33 +72,39 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
                     continue
                 end
 
-                instance.Transparency = 1
+                tweenTransparency(instance, 1)
             end
             
             continue
         end
-        
-        for _, instance in floorFolder:GetDescendants() do
-            if not instance:IsA("BasePart") then
-                continue
+
+        if floorNumber < currentFloor then
+            for _, roomFolder in floorFolder:GetChildren() do
+                local room = roomFolder.Name:match(`(%d){ SEPERATOR }.+`)
+                
+                if not room then
+                    continue
+                end
+
+                for _, instance in roomFolder:GetChildren() do
+                    if not instance:IsA("BasePart") then
+                        continue
+                    end
+
+                    tweenTransparency(instance, 0)
+                end
             end
 
-            instance.Transparency = 0
-        end
+            local shadows = floorFolder:FindFirstChild("Shadows") :: Folder
 
-        local shadows = floorFolder:FindFirstChild("Shadows")
-
-        if shadows then
             for _, shadow in shadows:GetChildren() do
                 if not shadow:IsA("BasePart") then
                     continue
                 end
 
-                shadow.Transparency = SHADOW_TRANSPARENCY
+                tweenTransparency(shadow, SHADOW_TRANSPARENCY)
             end
-        end
 
-        if floorNumber < currentFloor then
             continue
         end
 
@@ -95,21 +125,23 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
                     continue
                 end
 
-                instance.Transparency = if shouldHide then TRANSPARENCY else 0
+                tweenTransparency(instance, if shouldHide then TRANSPARENCY else 0)
             end
 
             if not isInRoom then
                 continue
             end
 
+            local shadows = floorFolder:FindFirstChild("Shadows") :: Folder
             local shadowValue = roomFolder:FindFirstChildOfClass("ObjectValue")
 
-            if not shadowValue then
-                continue
-            end
+            for _, shadow in shadows:GetChildren() do
+                if not shadow:IsA("BasePart") then
+                    continue
+                end
 
-            local shadowPart = shadowValue.Value :: BasePart
-            shadowPart.Transparency = 1
+                tweenTransparency(shadow, if shadowValue and shadow == shadowValue.Value then 1 else SHADOW_TRANSPARENCY)
+            end
         end
     end
 end
