@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 
 
 local SEPERATOR: string = "_"
-local TRANSPARENCY: number = 0.9
+local TRANSPARENCY: number = 0.8
 local SHADOW_TRANSPARENCY: number = 0.3
 local POLL_INTERVAL: number = 0.05
 
@@ -39,6 +39,28 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
             continue
         end
 
+        local floorNumber = tonumber(floor) :: number
+        
+        if floorNumber > currentFloor then
+            for _, instance in floorFolder:GetDescendants() do
+                if not instance:IsA("BasePart") then
+                    continue
+                end
+
+                instance.Transparency = 1
+            end
+            
+            continue
+        end
+        
+        for _, instance in floorFolder:GetDescendants() do
+            if not instance:IsA("BasePart") then
+                continue
+            end
+
+            instance.Transparency = 0
+        end
+
         local shadows = floorFolder:FindFirstChild("Shadows")
 
         if shadows then
@@ -51,6 +73,10 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
             end
         end
 
+        if floorNumber < currentFloor then
+            continue
+        end
+
         for _, roomFolder in floorFolder:GetChildren() do
             local room = roomFolder.Name:match(`(%d){ SEPERATOR }.+`)
             
@@ -58,8 +84,8 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
                 continue
             end
 
-            local floorNumber, roomNumber = tonumber(floor) :: number, tonumber(room) :: number
-            local shouldHide = floorNumber > currentFloor or roomNumber >= currentRoom
+            local roomNumber = tonumber(room) :: number
+            local shouldHide = roomNumber >= currentRoom
             local isInRoom = floorNumber == currentFloor and roomNumber == currentRoom
             
             for _, instance in roomFolder:GetChildren() do
@@ -75,7 +101,7 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
                 continue
             end
 
-            local shadowValue = roomFolder:FindFirstChild("Shadow") :: ObjectValue
+            local shadowValue = roomFolder:FindFirstChildOfClass("ObjectValue")
 
             if not shadowValue then
                 continue
@@ -127,7 +153,7 @@ function Regions.load(map: Model): ()
 
     for _, region in regionFolder:GetChildren() do
         if not region:IsA("BasePart") then
-            return
+            continue
         end
 
         local floor, room = region.Name:match("(%d+).(%d+)")
@@ -173,6 +199,8 @@ function Regions.load(map: Model): ()
 
         regions[region] = false
     end
+
+    handleTransparency(math.huge, math.huge)
 end
 
 
