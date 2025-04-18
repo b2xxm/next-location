@@ -10,7 +10,7 @@ local Input = require(client.Input)
 local Camera = require(client.Camera)
 local MouseAim = require(client.MouseAim)
 local Stratagem = require(client.Stratagem)
-local Regions = require(client.Regions)
+local HideWalls = require(client.HideWalls)
 
 
 Input.initialise()
@@ -19,4 +19,4 @@ MouseAim.initialise()
 Stratagem.initialise()
 
 Stratagem.load({ "TEST", "SEQUENCE 2", "SCAN" }) -- temporary
-Regions.load(Workspace.Map)
+HideWalls.load(Workspace.Map)
