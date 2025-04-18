@@ -1,7 +1,6 @@
 --!strict
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
 
 
 local shared = ReplicatedStorage.Shared
@@ -9,37 +8,20 @@ local client = shared.Client
 
 
 local TweenUtils = require(client.TweenUtils)
+local Region = require(shared.Region)
 
 
 local SEPERATOR: string = "_"
 local TRANSPARENCY: number = 0.8
 local SHADOW_TRANSPARENCY: number = 0.3
-local POLL_INTERVAL: number = 0.05
 
-local player: Player = Players.LocalPlayer
 local tweenInfo: TweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 
 
-local currentRegion: BasePart? = nil
-local bufferedRegion: BasePart? = nil
-local regions: { [BasePart]: boolean } = {}
 local currentMap: Model = nil
 
 
 local Regions = {}
-
-
-local function isTouching(region: BasePart): boolean
-    local parts = workspace:GetPartsInPart(region)
-
-    for _, part in parts do
-        if part:IsDescendantOf(player.Character) then
-            return true
-        end
-    end
-
-    return false
-end
 
 
 local function tweenTransparency(instance: BasePart, transparency: number): ()
@@ -147,85 +129,33 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
 end
 
 
-local function poll(): ()
-    local region = currentRegion :: BasePart
+local function regionEntered(region: BasePart?)
+    if region == nil then
+        handleTransparency(math.huge, math.huge)
 
-    while true do
-        if not isTouching(region) then
-            break
-        end
-        
-        task.wait(POLL_INTERVAL)
-    end
-    
-    regions[region] = false
-
-    if bufferedRegion ~= nil and isTouching(bufferedRegion) then
-        local floor, room = bufferedRegion.Name:match("(%d+).(%d+)")
-
-        currentRegion = bufferedRegion
-        regions[bufferedRegion] = true
-        bufferedRegion = nil
-
-        handleTransparency(tonumber(floor) :: number, tonumber(room) :: number)
-        task.spawn(poll)
-        
         return
     end
     
-    currentRegion = nil
-    bufferedRegion = nil
-
-    handleTransparency(math.huge, math.huge)
+    local floor, room = region.Name:match("(%d+).(%d+)")
+    handleTransparency(tonumber(floor) :: number, tonumber(room) :: number)
 end
 
 
 function Regions.load(map: Model): ()
-    table.clear(regions)
-
     local regionFolder = map:FindFirstChild("Regions") :: Folder
     currentMap = map
 
-    for _, region in regionFolder:GetChildren() do
-        if not region:IsA("BasePart") then
+    local regions = {} :: { BasePart }
+
+    for _, instance in regionFolder:GetChildren() do
+        if not instance:IsA("BasePart") then
             continue
         end
 
-        local floor, room = region.Name:match("(%d+).(%d+)")
-
-        local function touched(hit: BasePart): ()
-            if regions[region] then
-                return
-            end
-
-            if not hit:IsDescendantOf(player.Character :: Model) then
-                return
-            end
-
-            if currentRegion ~= nil and currentRegion ~= region then
-                if region == bufferedRegion then
-                    return
-                end
-
-                bufferedRegion = region
-
-                return
-            end
-            
-            currentRegion = region
-            regions[region] = true
-
-            handleTransparency(tonumber(floor) :: number, tonumber(room) :: number)
-
-            task.wait(0.2) -- arbitrary wait time before polling
-
-            task.spawn(poll)
-        end
-
-        region.Touched:Connect(touched)
-
-        regions[region] = false
+        table.insert(regions, instance)
     end
+
+    Region.load(regions, "HideWalls", regionEntered)
 
     handleTransparency(math.huge, math.huge)
 end
