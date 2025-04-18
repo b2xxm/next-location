@@ -3,30 +3,44 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+
+local prefabs = ReplicatedStorage.Prefabs
 
 
 local player: Player = Players.LocalPlayer
-local character: Model? = player.Character or player.CharacterAdded:Wait()
-local camera: Camera = workspace.CurrentCamera
+local camera: Camera = Workspace.CurrentCamera
 
 local raycastParams: RaycastParams = RaycastParams.new()
 raycastParams.RespectCanCollide = false
-raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+raycastParams.FilterType = Enum.RaycastFilterType.Include
+
+
+local character: Model = nil
+local plane: BasePart = nil
 
 
 local MouseAim = {}
 
 
-local function refreshCharacter(newCharacter: Model): ()
+local function characterAdded(newCharacter: Model): ()
     character = newCharacter
-    raycastParams.FilterDescendantsInstances = { newCharacter }
+    
+    local weld = plane:FindFirstChildOfClass("WeldConstraint") :: WeldConstraint
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart") :: BasePart
+
+    -- offset for approxiamate foot level
+    plane.Position = humanoidRootPart.Position - Vector3.yAxis * 3
+    weld.Part1 = humanoidRootPart
 end
 
 
 local function update(_deltaTime: number): ()
     local position = UserInputService:GetMouseLocation()
     local ray = camera:ViewportPointToRay(position.X, position.Y)
-    local result = workspace:Raycast(ray.Origin, ray.Direction * 100, raycastParams)
+    local result = Workspace:Raycast(ray.Origin, ray.Direction * 100, raycastParams)
 
     if not result then
         return
@@ -37,15 +51,22 @@ end
 
 
 function MouseAim.initialise(): ()
-    player.CharacterAdded:Connect(refreshCharacter)
-    RunService:BindToRenderStep("DirectionUpdate", Enum.RenderPriority.Last.Value, update)
+    local mousePlanePrefab = prefabs.MouseAim:FindFirstChild("Plane") :: BasePart
+
+    plane = mousePlanePrefab:Clone()
+    plane.Parent = Workspace
+
+    raycastParams.FilterDescendantsInstances = { plane }
+
+    characterAdded(player.Character :: Model)
     
-    raycastParams.FilterDescendantsInstances = { character :: Model }
+    player.CharacterAdded:Connect(characterAdded)
+    RunService:BindToRenderStep("DirectionUpdate", Enum.RenderPriority.Last.Value, update)
 end
 
 
 function MouseAim.mouseMoved(target: Vector3): ()
-    if not character or not character.Parent then
+    if not character.Parent then
         return
     end
 
