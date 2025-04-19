@@ -144,8 +144,7 @@ function Stratagem.initialise(): ()
 
     Input.register("StratagemMenu", toggleMenuInput, menuKeyCode)
     Input.register("StratagemSequence", sequenceInput, table.unpack(sequenceKeyCodes))
-
-    Input.toggle("ActivateStratagem", false)
+    
     toggleMenu(false)
 end
 

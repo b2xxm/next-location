@@ -22,10 +22,17 @@ local states:{ [string]: StateDefinition } = {
 }
 
 
-local currentState: StateDefinition = states["Idle"]
+local currentState: StateDefinition = nil
 
 
 local StateMachine = {}
+
+
+function StateMachine.initialise(): ()
+    currentState = states["Idle"]
+
+    currentState.enter()
+end
 
 
 function StateMachine.update(input: StateInput): StateDefinition

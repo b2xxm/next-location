@@ -65,6 +65,8 @@ function Player.initialise(): ()
 
         StateMachine.update(flags)
     end
+    
+    StateMachine.initialise()
 
     for _, key in moveKeys do
         keysDown[key] = false
