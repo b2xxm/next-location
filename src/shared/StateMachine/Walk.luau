@@ -30,7 +30,7 @@ Walk.transitions = {
 }
 
 
-function Walk.enter(): ()
+function Walk.enter(transition: (toState: string) -> ()): ()
     Animation.play("Walk")
     Character.setWalkspeed(WALK_SPEED)
 end

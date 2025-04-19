@@ -27,7 +27,7 @@ Run.transitions = {
 }
 
 
-function Run.enter(): ()
+function Run.enter(transition: (toState: string) -> ()): ()
     Animation.play("Run")
     Character.setWalkspeed(RUN_SPEED)
 end

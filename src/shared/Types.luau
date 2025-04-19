@@ -3,7 +3,7 @@ export type InputType = Enum.KeyCode | Enum.UserInputType
 -- States
 export type StateDefinition = {
     transitions: { [string]: (StateInput) -> boolean },
-    enter: () -> (),
+    enter: (transition: (toState: string) -> ()) -> (),
     exit: () -> ()
 }
 

@@ -28,10 +28,17 @@ local currentState: StateDefinition = nil
 local StateMachine = {}
 
 
+local function transition(toState: string): ()
+    currentState.exit()
+    currentState = states[toState]
+    currentState.enter(transition)
+end
+
+
 function StateMachine.initialise(): ()
     currentState = states["Idle"]
 
-    currentState.enter()
+    currentState.enter(transition)
 end
 
 
@@ -44,10 +51,8 @@ function StateMachine.update(input: StateInput): StateDefinition
         if not canTransition then
             continue
         end
-        
-        currentState.exit()
-        currentState = states[toState]
-        currentState.enter()
+
+        transition(toState)
 
         break
     end

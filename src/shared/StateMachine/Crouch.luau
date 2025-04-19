@@ -23,7 +23,7 @@ Crouch.transitions = {
 }
 
 
-function Crouch.enter(): ()
+function Crouch.enter(transition: (toState: string) -> ()): ()
     Animation.play("Crouch")
 end
 

@@ -27,7 +27,7 @@ Sneak.transitions = {
 }
 
 
-function Sneak.enter(): ()
+function Sneak.enter(transition: (toState: string) -> ()): ()
     Animation.play("Sneak")
     Character.setWalkspeed(SNEAK_SPEED)
 end
