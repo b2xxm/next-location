@@ -21,8 +21,7 @@ function Player.toggleMovement(enabled: boolean): ()
     local character = player.Character :: Model
     local humanoid = character:WaitForChild("Humanoid") :: Humanoid
 
-    if enabled then
-        humanoid.WalkSpeed = DEFAULT_WALKSPEED
+    humanoid.WalkSpeed = if enabled then DEFAULT_WALKSPEED else 0
 
         return
     end

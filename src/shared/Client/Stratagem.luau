@@ -23,8 +23,8 @@ local DEFAULT_TEXT_TRANSPARENCY: number = 0.5
 local characterPrefab: TextLabel = prefabs.Stratagem.Character
 local templatePrefab: Frame = prefabs.Stratagem.Template
 
-local menuKeyCode: InputType = Enum.KeyCode.LeftControl
-local activateKeyCode: InputType = Enum.KeyCode.F
+local menuKeyCode: InputType = Enum.KeyCode.LeftAlt -- allow user mapping
+local activateKeyCode: InputType = Enum.KeyCode.F -- allow user mapping
 local sequenceKeyCodes: { InputType } = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
 
 

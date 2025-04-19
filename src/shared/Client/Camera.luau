@@ -17,7 +17,7 @@ local TARGET_FRAME_RATE: number = 60
 local character: Model = nil
 local focusPart: Part = nil
 local camera: Camera = workspace.CurrentCamera
-local offset: Vector3 = Vector3.new(8, 13, 8)
+local offset: Vector3 = Vector3.new(-7, 15, -7)
 
 
 local Camera = {}

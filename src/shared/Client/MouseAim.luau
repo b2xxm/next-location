@@ -33,6 +33,7 @@ local function characterAdded(newCharacter: Model): ()
 
     -- offset for approxiamate foot level
     plane.Position = humanoidRootPart.Position - Vector3.yAxis * 3
+    weld.Enabled = true
     weld.Part1 = humanoidRootPart
 end
 

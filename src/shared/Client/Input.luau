@@ -59,6 +59,7 @@ function Input.register(name: string, callback: (input: InputObject) -> (), ...:
         return
     end
     
+
     if actionStatus[name] ~= nil then
         warn(`'{name}' occupies different actions`)
 
@@ -86,6 +87,12 @@ end
 
 
 function Input.toggle(name: string, enabled: boolean): ()
+    if actionStatus[name] == nil then
+        warn(`{name} is not registered yet`)
+
+        return
+    end
+
     actionStatus[name] = enabled
 end
 
