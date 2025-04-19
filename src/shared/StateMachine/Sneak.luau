@@ -6,10 +6,14 @@ local client = shared.Client
 
 
 local Animation = require(client.Player.Animation)
+local Character = require(client.Player.Character)
 local Types = require(shared.Types)
 
 
 type StateInput = Types.StateInput
+
+
+local SNEAK_SPEED: number = 3
 
 
 local Sneak = {}
@@ -25,6 +29,7 @@ Sneak.transitions = {
 
 function Sneak.enter(): ()
     Animation.play("Sneak")
+    Character.setWalkspeed(SNEAK_SPEED)
 end
 
 

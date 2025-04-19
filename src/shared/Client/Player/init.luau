@@ -11,14 +11,13 @@ local client = shared.Client
 local StateMachine = require(shared.StateMachine)
 local Input = require(client.Input)
 local Animation = require(client.Player.Animation)
+local Character = require(client.Player.Character)
 local Types = require(shared.Types)
 
 
 type StateInput = Types.StateInput
 type InputType = Types.InputType
 
-
-local DEFAULT_WALKSPEED: number = 16
 
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
@@ -67,8 +66,8 @@ function Player.initialise(): ()
         StateMachine.update(flags)
     end
     
-    StateMachine.initialise()
     Animation.initialise(player)
+    StateMachine.initialise()
 
     for _, key in moveKeys do
         keysDown[key] = false
@@ -86,17 +85,13 @@ end
 
 
 function Player.toggleMovement(enabled: boolean): ()
-    local character = player.Character :: Model
-    local humanoid = character:WaitForChild("Humanoid") :: Humanoid
-
-    humanoid.WalkSpeed = if enabled then DEFAULT_WALKSPEED else 0
-
     flags.move = false
     flags.crouch = false
 
     Input.toggle("Movement", enabled)
     Input.toggle("CrouchKeyDown", enabled)
 
+    Character.setWalkspeed(0)
     StateMachine.update(flags)
 end
 

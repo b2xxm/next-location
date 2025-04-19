@@ -6,10 +6,14 @@ local client = shared.Client
 
 
 local Animation = require(client.Player.Animation)
+local Character = require(client.Player.Character)
 local Types = require(shared.Types)
 
 
 type StateInput = Types.StateInput
+
+
+local WALK_SPEED: number = 7
 
 
 local Walk = {}
@@ -28,6 +32,7 @@ Walk.transitions = {
 
 function Walk.enter(): ()
     Animation.play("Walk")
+    Character.setWalkspeed(WALK_SPEED)
 end
 
 
