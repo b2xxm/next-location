@@ -2,8 +2,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 
 local shared = ReplicatedStorage.Shared
+local client = shared.Client
 
 
+local Animation = require(client.Player.Animation)
 local Types = require(shared.Types)
 
 
@@ -25,12 +27,12 @@ Idle.transitions = {
 
 
 function Idle.enter(): ()
-    print("Idle enter")
+    Animation.play("Idle")
 end
 
 
 function Idle.exit(): ()
-    print("Idle exit")
+    Animation.stop("Idle")
 end
 
 

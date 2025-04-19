@@ -2,8 +2,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 
 local shared = ReplicatedStorage.Shared
+local client = shared.Client
 
 
+local Animation = require(client.Player.Animation)
 local Types = require(shared.Types)
 
 
@@ -22,12 +24,12 @@ Sneak.transitions = {
 
 
 function Sneak.enter(): ()
-    print("Sneak enter")
+    Animation.play("Sneak")
 end
 
 
 function Sneak.exit(): ()
-    print("Sneak exit")
+    Animation.stop("Sneak")
 end
 
 

@@ -18,6 +18,9 @@
         "MouseAim": {
           "$className": "Folder"
         }
+      },
+      "Animations": {
+        "$className": "Folder"
       }
     },
 

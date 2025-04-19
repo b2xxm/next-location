@@ -10,6 +10,7 @@ local client = shared.Client
 
 local StateMachine = require(shared.StateMachine)
 local Input = require(client.Input)
+local Animation = require(client.Player.Animation)
 local Types = require(shared.Types)
 
 
@@ -67,6 +68,7 @@ function Player.initialise(): ()
     end
     
     StateMachine.initialise()
+    Animation.initialise(player)
 
     for _, key in moveKeys do
         keysDown[key] = false

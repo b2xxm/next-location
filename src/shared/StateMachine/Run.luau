@@ -2,8 +2,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 
 local shared = ReplicatedStorage.Shared
+local client = shared.Client
 
 
+local Animation = require(client.Player.Animation)
 local Types = require(shared.Types)
 
 
@@ -22,12 +24,12 @@ Run.transitions = {
 
 
 function Run.enter(): ()
-    print("Run enter")
+    Animation.play("Run")
 end
 
 
 function Run.exit(): ()
-    print("Run exit")
+    Animation.stop("Run")
 end
 
 
