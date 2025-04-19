@@ -24,7 +24,6 @@ local characterPrefab: TextLabel = prefabs.Stratagem.Character
 local templatePrefab: Frame = prefabs.Stratagem.Template
 
 local menuKeyCode: InputType = Enum.KeyCode.LeftAlt -- allow user mapping
-local activateKeyCode: InputType = Enum.KeyCode.F -- allow user mapping
 local sequenceKeyCodes: { InputType } = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
 
 
@@ -133,31 +132,18 @@ function Stratagem.initialise(): ()
 
         elseif input.UserInputState == Enum.UserInputState.End then
             if selected then
-                Input.toggle("ActivateStratagem", true)
+                local stratagem = StratagemList[selected]
+                stratagem.callback()
+        
+                selected = nil
             end
 
             toggleMenu(false)
         end
     end
 
-    local function activate(input: InputObject)
-        if selected == nil then
-            return
-        end
-
-        print(selected, "activated")
-
-        local stratagem = StratagemList[selected]
-        stratagem.callback()
-
-        selected = nil
-
-        Input.toggle("ActivateStratagem", false)
-    end
-
     Input.register("StratagemMenu", toggleMenuInput, menuKeyCode)
     Input.register("StratagemSequence", sequenceInput, table.unpack(sequenceKeyCodes))
-    Input.register("ActivateStratagem", activate, activateKeyCode)
 
     Input.toggle("ActivateStratagem", false)
     toggleMenu(false)
