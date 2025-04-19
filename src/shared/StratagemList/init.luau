@@ -12,17 +12,17 @@ local StratagemList: { [string]: Stratagem } = {}
 
 StratagemList["TEST"] = {
     sequence = { "D", "D", "W" },
-    callback = require(script.TempTest)
+    callback = function() print("TEST") end
 }
 
 StratagemList["SEQUENCE 2"] = {
     sequence = { "W", "W", "S", "S", "A", "D" },
-    callback = function() end
+    callback = function() print("SEQUENCE 2") end
 }
 
 StratagemList["SCAN"] = {
     sequence = { "W", "W", "S", "S", "A", "A" },
-    callback = function() end
+    callback = function() print("SCAN") end
 }
 
 
