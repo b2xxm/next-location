@@ -58,7 +58,6 @@ function Input.register(name: string, callback: (input: InputObject) -> (), ...:
 
         return
     end
-    
 
     if actionStatus[name] ~= nil then
         warn(`'{name}' occupies different actions`)
