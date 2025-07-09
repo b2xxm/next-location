@@ -1,19 +1,25 @@
 export type InputType = Enum.KeyCode | Enum.UserInputType
 
--- States
 export type StateDefinition = {
-    transitions: { [string]: (StateInput) -> boolean },
+    transitions: { [string]: (PlayerFlags) -> boolean },
     enter: () -> (),
     exit: () -> (),
-    metadata: { autoExit: { delay: number, callback: (input: StateInput) -> () }? }
+    metadata: { autoExit: { delay: number, callback: (flags: PlayerFlags) -> () }? }
 }
 
-export type StateInput = {
-    move: boolean,
-    run: boolean,
-    crouch: boolean,
-    slide: boolean
+export type PlayerFlags = {
+    i_move: boolean,
+    i_run: boolean,
+    i_crouch: boolean,
+    a_slide: boolean
 }
+
+--[[ prefix: i_move, i_run, i_crouch, a_slide
+
+i - input
+a - action
+
+]]
 
 
 return nil

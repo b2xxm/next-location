@@ -9,7 +9,7 @@ local shared = ReplicatedStorage.Shared
 local Types = require(shared.Types)
 
 
-type StateInput = Types.StateInput
+type PlayerFlags = Types.PlayerFlags
 type StateDefinition = Types.StateDefinition
 
 
@@ -48,11 +48,11 @@ function StateMachine.initialise(): ()
 end
 
 
-function StateMachine.update(input: StateInput): StateDefinition?
+function StateMachine.update(flags: PlayerFlags): StateDefinition?
 
 
     for state, canTransition in states[currentState].transitions do
-        if not canTransition(input) then
+        if not canTransition(flags) then
             continue
         end
 

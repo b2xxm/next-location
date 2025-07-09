@@ -15,7 +15,7 @@ local Character = require(client.Player.Character)
 local Types = require(shared.Types)
 
 
-type StateInput = Types.StateInput
+type PlayerFlags = Types.PlayerFlags
 type InputType = Types.InputType
 
 
@@ -71,23 +71,23 @@ function Player.initialise(): ()
             moving = moving or isDown
         end
 
-        flags.move = moving
+        flags.i_move = moving
 
         updateState()
     end
 
     local function run(input: InputObject): ()
-        flags.run = input.UserInputState == Enum.UserInputState.Begin
+        flags.i_run = input.UserInputState == Enum.UserInputState.Begin
 
         updateState()
     end
 
     local function crouch(input: InputObject): ()
         local crouching = input.UserInputState == Enum.UserInputState.Begin
-        flags.crouch = crouching
+        flags.i_crouch = crouching
 
-        if not flags.slide then
-            flags.slide = crouching and flags.run
+        if not flags.a_slide then
+            flags.a_slide = crouching and flags.i_run
         end
 
         updateState()
@@ -112,8 +112,8 @@ end
 
 
 function Player.toggleMovement(enabled: boolean): ()
-    flags.move = false
-    flags.crouch = false
+    flags.i_move = false
+    flags.i_crouch = false
 
     Input.toggle("Movement", enabled)
     Input.toggle("CrouchKeyDown", enabled)
@@ -129,7 +129,7 @@ Character.initialise()
 local DebugMenu = Player.getInterface("Debug")
 local prefab = DebugMenu:FindFirstChild("Prefab", true) :: Frame
 
-local internal: StateInput = { move = false, run = false, crouch = false, slide = false }
+local internal: PlayerFlags = { i_move = false, i_run = false, i_crouch = false, a_slide = false }
 local stateValues = {}
 
 for state, value in internal do

@@ -10,7 +10,7 @@ local Character = require(client.Player.Character)
 local Types = require(shared.Types)
 
 
-type StateInput = Types.StateInput
+type PlayerFlags = Types.PlayerFlags
 
 
 local SNEAK_SPEED: number = 4
@@ -19,11 +19,11 @@ local SNEAK_SPEED: number = 4
 local Sneak = {}
 Sneak.metadata = {}
 Sneak.transitions = {
-    Walk = function(input: StateInput): boolean
-        return not input.crouch
+    Walk = function(flags: PlayerFlags): boolean
+        return not flags.i_crouch
     end,
-    Crouch = function(input: StateInput): boolean
-        return not input.move
+    Crouch = function(flags: PlayerFlags): boolean
+        return not flags.i_move
     end
 }
 

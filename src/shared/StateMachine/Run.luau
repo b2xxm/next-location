@@ -10,7 +10,7 @@ local Character = require(client.Player.Character)
 local Types = require(shared.Types)
 
 
-type StateInput = Types.StateInput
+type PlayerFlags = Types.PlayerFlags
 
 
 local RUN_SPEED: number = 22
@@ -19,14 +19,14 @@ local RUN_SPEED: number = 22
 local Run = {}
 Run.metadata = {}
 Run.transitions = {
-    Idle = function(input: StateInput): boolean
-        return not input.move
+    Idle = function(flags: PlayerFlags): boolean
+        return not flags.i_move
     end,
-    Walk = function(input: StateInput): boolean
-        return not input.run
+    Walk = function(flags: PlayerFlags): boolean
+        return not flags.i_run
     end,
-    Slide = function(input: StateInput): boolean
-        return input.slide
+    Slide = function(flags: PlayerFlags): boolean
+        return flags.a_slide
     end
 }
 

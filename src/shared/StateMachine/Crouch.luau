@@ -9,17 +9,17 @@ local Animation = require(client.Player.Animation)
 local Types = require(shared.Types)
 
 
-type StateInput = Types.StateInput
+type PlayerFlags = Types.PlayerFlags
 
 
 local Crouch = {}
 Crouch.metadata = {}
 Crouch.transitions = {
-    Idle = function(input: StateInput): boolean
-        return not input.crouch
+    Idle = function(flags: PlayerFlags): boolean
+        return not flags.i_crouch
     end,
-    Sneak = function(input: StateInput): boolean
-        return input.move
+    Sneak = function(flags: PlayerFlags): boolean
+        return flags.i_move
     end,
 }
 

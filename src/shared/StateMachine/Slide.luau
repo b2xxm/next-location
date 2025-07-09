@@ -10,7 +10,7 @@ local Character = require(client.Player.Character)
 local Types = require(shared.Types)
 
 
-type StateInput = Types.StateInput
+type PlayerFlags = Types.PlayerFlags
 
 
 local DURATION: number = 1
@@ -20,21 +20,21 @@ local Slide = {}
 Slide.metadata = {
     autoExit = {
         delay = DURATION,
-        callback = function(input: StateInput)
-            input.slide = false
+        callback = function(flags: PlayerFlags)
+            flags.a_slide = false
         end
     }
 }
 
 Slide.transitions = {
-    Walk = function(input: StateInput): boolean
-        return input.move and not input.run and not input.slide
+    Walk = function(flags: PlayerFlags): boolean
+        return flags.i_move and not flags.i_run and not flags.a_slide
     end,
-    Run = function(input: StateInput): boolean
-        return input.move and input.run and not input.slide
+    Run = function(flags: PlayerFlags): boolean
+        return flags.i_move and flags.i_run and not flags.a_slide
     end,
-    Idle = function(input: StateInput): boolean
-        return not input.move and not input.slide
+    Idle = function(flags: PlayerFlags): boolean
+        return not flags.i_move and not flags.a_slide
     end
 }
 
