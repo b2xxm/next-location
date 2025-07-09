@@ -22,7 +22,7 @@ local actionStatus: { [string]: boolean } = {}
 local Input = {}
 
 
-local function input(input: InputObject, processedEvent: boolean): ()
+local function onInput(input: InputObject, processedEvent: boolean): ()
     if processedEvent then
         return
     end
@@ -45,8 +45,8 @@ end
 
 
 function Input.initialise(): ()
-    UserInputService.InputBegan:Connect(input)
-    UserInputService.InputEnded:Connect(input)
+    UserInputService.InputBegan:Connect(onInput)
+    UserInputService.InputEnded:Connect(onInput)
 end
 
 

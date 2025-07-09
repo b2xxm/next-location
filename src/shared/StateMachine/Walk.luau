@@ -13,10 +13,11 @@ local Types = require(shared.Types)
 type StateInput = Types.StateInput
 
 
-local WALK_SPEED: number = 7
+local WALK_SPEED: number = 8
 
 
 local Walk = {}
+Walk.metadata = {}
 Walk.transitions = {
     Idle = function(input: StateInput): boolean
         return not input.move
@@ -30,7 +31,7 @@ Walk.transitions = {
 }
 
 
-function Walk.enter(transition: (toState: string) -> ()): ()
+function Walk.enter(): ()
     Animation.play("Walk")
     Character.setWalkspeed(WALK_SPEED)
 end

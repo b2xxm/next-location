@@ -13,6 +13,7 @@ type StateInput = Types.StateInput
 
 
 local Crouch = {}
+Crouch.metadata = {}
 Crouch.transitions = {
     Idle = function(input: StateInput): boolean
         return not input.crouch
@@ -23,7 +24,7 @@ Crouch.transitions = {
 }
 
 
-function Crouch.enter(transition: (toState: string) -> ()): ()
+function Crouch.enter(): ()
     Animation.play("Crouch")
 end
 

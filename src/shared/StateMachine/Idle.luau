@@ -17,6 +17,7 @@ local WALK_SPEED: number = 8
 
 
 local Idle = {}
+Idle.metadata = {}
 Idle.transitions = {
     Walk = function(input: StateInput): boolean
         return input.move and not input.run
@@ -30,7 +31,7 @@ Idle.transitions = {
 }
 
 
-function Idle.enter(transition: (toState: string) -> ()): ()
+function Idle.enter(): ()
     Animation.play("Idle")
     Character.setWalkspeed(WALK_SPEED)
 end

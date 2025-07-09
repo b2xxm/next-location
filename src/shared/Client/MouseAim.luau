@@ -62,7 +62,6 @@ function MouseAim.initialise(): ()
     characterAdded(player.Character :: Model)
     
     player.CharacterAdded:Connect(characterAdded)
-    RunService:BindToRenderStep("DirectionUpdate", Enum.RenderPriority.Last.Value, update)
 end
 
 
@@ -76,6 +75,15 @@ function MouseAim.mouseMoved(target: Vector3): ()
     local xzDirection = Vector3.new(direction.X, 0, direction.Z)
 
     rootPart.CFrame = CFrame.lookAlong(rootPart.Position, xzDirection)
+end
+
+
+function MouseAim.toggle(enabled: boolean): ()
+    if enabled then
+        RunService:BindToRenderStep("DirectionUpdate", Enum.RenderPriority.Last.Value, update)
+    else
+        RunService:UnbindFromRenderStep("DirectionUpdate")
+    end
 end
 
 

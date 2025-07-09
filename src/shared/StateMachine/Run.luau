@@ -17,17 +17,21 @@ local RUN_SPEED: number = 22
 
 
 local Run = {}
+Run.metadata = {}
 Run.transitions = {
     Idle = function(input: StateInput): boolean
         return not input.move
     end,
     Walk = function(input: StateInput): boolean
         return not input.run
+    end,
+    Slide = function(input: StateInput): boolean
+        return input.slide
     end
 }
 
 
-function Run.enter(transition: (toState: string) -> ()): ()
+function Run.enter(): ()
     Animation.play("Run")
     Character.setWalkspeed(RUN_SPEED)
 end

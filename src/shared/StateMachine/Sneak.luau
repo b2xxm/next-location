@@ -13,10 +13,11 @@ local Types = require(shared.Types)
 type StateInput = Types.StateInput
 
 
-local SNEAK_SPEED: number = 3
+local SNEAK_SPEED: number = 4
 
 
 local Sneak = {}
+Sneak.metadata = {}
 Sneak.transitions = {
     Walk = function(input: StateInput): boolean
         return not input.crouch
@@ -27,7 +28,7 @@ Sneak.transitions = {
 }
 
 
-function Sneak.enter(transition: (toState: string) -> ()): ()
+function Sneak.enter(): ()
     Animation.play("Sneak")
     Character.setWalkspeed(SNEAK_SPEED)
 end

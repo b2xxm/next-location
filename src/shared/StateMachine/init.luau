@@ -18,46 +18,50 @@ local states:{ [string]: StateDefinition } = {
     Walk = require(script.Walk),
     Run = require(script.Run),
     Crouch = require(script.Crouch),
-    Sneak = require(script.Sneak)
+    Sneak = require(script.Sneak),
+    Slide = require(script.Slide)
 }
 
 
-local currentState: StateDefinition = nil
+local currentState: string = nil
 
 
 local StateMachine = {}
 
 
 local function transition(toState: string): ()
-    currentState.exit()
-    currentState = states[toState]
-    currentState.enter(transition)
+    local state = states[currentState]
+    state.exit()
+
+    currentState = toState
+
+    local newState = states[currentState]
+    newState.enter()
 end
 
 
 function StateMachine.initialise(): ()
-    currentState = states["Idle"]
+    currentState = "Idle"
 
-    currentState.enter(transition)
+    local state = states[currentState]
+    state.enter()
 end
 
 
-function StateMachine.update(input: StateInput): StateDefinition
-    local options = currentState.transitions
+function StateMachine.update(input: StateInput): StateDefinition?
 
-    for toState, callback in options do
-        local canTransition = callback(input)
 
-        if not canTransition then
+    for state, canTransition in states[currentState].transitions do
+        if not canTransition(input) then
             continue
         end
 
-        transition(toState)
+        transition(state)
 
-        break
+        return states[state]
     end
 
-    return currentState
+    return
 end
 
 

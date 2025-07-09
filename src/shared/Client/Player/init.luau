@@ -22,65 +22,92 @@ type InputType = Types.InputType
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
 
-local runKey: InputType = Enum.KeyCode.LeftShift -- allow user mapping
-local crouchKey: InputType = Enum.KeyCode.LeftControl -- allow user mapping
+local runKey: InputType = Enum.KeyCode.LeftShift -- allow custom mapping
+local crouchKey: InputType = Enum.KeyCode.Space -- allow custom mapping
 local moveKeys: { InputType } = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
 
 
-local flags: StateInput = { move = false, run = false, crouch = false }
-local keysDown: { [InputType]: boolean } = {}
+local flags: { [string]: boolean } = {}
+local moveKeysDown: { [InputType]: boolean } = {}
 
 
 local Player = {}
 
 
+local function updateState(): ()
+    local newState = StateMachine.update(flags)
+
+    if not newState then
+        return
+    end
+
+    local autoExit = newState.metadata.autoExit
+    
+    if autoExit then
+        local function automatic(): ()
+            autoExit.callback(flags)
+            StateMachine.update(flags)
+        end
+
+        task.delay(autoExit.delay, automatic)
+    end
+end
+
+
 function Player.initialise(): ()
-    local function moving(input: InputObject): ()
+    local function move(input: InputObject): ()
+        -- holding counter acting keys still register as moving
+
         if input.UserInputState == Enum.UserInputState.Begin then
-            keysDown[input.KeyCode] = true
+            moveKeysDown[input.KeyCode] = true
 
         elseif input.UserInputState == Enum.UserInputState.End then
-            keysDown[input.KeyCode] = false
+            moveKeysDown[input.KeyCode] = false
         end
 
         local moving = false
 
-        for key, isDown in keysDown do
+        for _, isDown in moveKeysDown do
             moving = moving or isDown
         end
 
         flags.move = moving
 
-        StateMachine.update(flags)
+        updateState()
     end
 
     local function run(input: InputObject): ()
         flags.run = input.UserInputState == Enum.UserInputState.Begin
 
-        StateMachine.update(flags)
+        updateState()
     end
 
     local function crouch(input: InputObject): ()
-        flags.crouch = input.UserInputState == Enum.UserInputState.Begin
+        local crouching = input.UserInputState == Enum.UserInputState.Begin
+        flags.crouch = crouching
 
-        StateMachine.update(flags)
+        if not flags.slide then
+            flags.slide = crouching and flags.run
+        end
+
+        updateState()
     end
     
     Animation.initialise(player)
     StateMachine.initialise()
 
     for _, key in moveKeys do
-        keysDown[key] = false
+        moveKeysDown[key] = false
     end
 
-    Input.register("Movement", moving, table.unpack(moveKeys))
+    Input.register("Movement", move, table.unpack(moveKeys))
     Input.register("RunKeyDown", run, runKey)
     Input.register("CrouchKeyDown", crouch, crouchKey)
 end
 
 
 function Player.getInterface(name: string): ScreenGui
-    return playerGui:FindFirstChild(name) :: ScreenGui
+    return playerGui:WaitForChild(name) :: ScreenGui
 end
 
 
@@ -91,9 +118,41 @@ function Player.toggleMovement(enabled: boolean): ()
     Input.toggle("Movement", enabled)
     Input.toggle("CrouchKeyDown", enabled)
 
+    updateState()
     Character.setWalkspeed(0)
-    StateMachine.update(flags)
 end
 
+
+Character.initialise()
+
+-- DEBUG
+local DebugMenu = Player.getInterface("Debug")
+local prefab = DebugMenu:FindFirstChild("Prefab", true) :: Frame
+
+local internal: StateInput = { move = false, run = false, crouch = false, slide = false }
+local stateValues = {}
+
+for state, value in internal do
+    local new = prefab:Clone()
+    local stateLabel = new:FindFirstChild("State") :: TextLabel
+    local valueLabel = new:FindFirstChild("Value") :: TextLabel
+    new.Parent = prefab.Parent
+
+    stateLabel.Text = state :: string
+    valueLabel.Text = tostring(value)
+
+    stateValues[state] = valueLabel
+end
+
+setmetatable(flags, {
+    __index = internal,
+    __newindex = function(_, k, v)
+        internal[k] = v
+        stateValues[k].Text = tostring(v)
+    end
+})
+
+prefab:Destroy()
+-- END DEBUG
 
 return Player
