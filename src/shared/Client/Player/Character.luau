@@ -33,20 +33,22 @@ function Character.setWalkspeed(speed: number): ()
 end
 
 
-function Character.enableSlideVelocity(): ()
+function Character.enableForwardVelocity(speed: number): ()
     local character = player.Character :: Model
     local humanoid = character:WaitForChild("Humanoid") :: Humanoid
     local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
 
     humanoid.AutoRotate = false
 
+    -- disable slide when falling state is entered.
+
     local velocity = rootPart:WaitForChild("SlideVelocity") :: LinearVelocity
-    velocity.VectorVelocity = rootPart.CFrame.LookVector * 22 -- arbitrary
+    velocity.VectorVelocity = rootPart.CFrame.LookVector * speed
     velocity.Enabled = true
 end
 
 
-function Character.disableSlideVelocity(): ()
+function Character.disableForwardVelocity(): ()
     local character = player.Character :: Model
     local humanoid = character:WaitForChild("Humanoid") :: Humanoid
     local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart

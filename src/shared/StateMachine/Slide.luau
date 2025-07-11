@@ -40,13 +40,13 @@ Slide.transitions = {
 
 
 function Slide.enter(): ()
-    Character.enableSlideVelocity()
+    Character.enableForwardVelocity(22) -- arbitrary
     Animation.play("Slide")
 end
 
 
 function Slide.exit(): ()
-    Character.disableSlideVelocity()
+    Character.disableForwardVelocity()
     Animation.stop("Slide")
 end
 

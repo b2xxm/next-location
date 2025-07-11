@@ -22,9 +22,16 @@ type InputType = Types.InputType
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
 
-local runKey: InputType = Enum.KeyCode.LeftShift -- allow custom mapping
-local crouchKey: InputType = Enum.KeyCode.Space -- allow custom mapping
+local runKey: InputType = Enum.KeyCode.LeftShift
+local crouchKey: InputType = Enum.KeyCode.Space
 local moveKeys: { InputType } = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
+
+local counterMoveKeys: { [InputType]: InputType } = {
+    [moveKeys[1]] = moveKeys[3],
+    [moveKeys[2]] = moveKeys[4],
+    [moveKeys[3]] = moveKeys[1],
+    [moveKeys[4]] = moveKeys[2],
+}
 
 
 local flags: { [string]: boolean } = {}
@@ -56,8 +63,6 @@ end
 
 function Player.initialise(): ()
     local function move(input: InputObject): ()
-        -- holding counter acting keys still register as moving
-
         if input.UserInputState == Enum.UserInputState.Begin then
             moveKeysDown[input.KeyCode] = true
 
@@ -66,9 +71,17 @@ function Player.initialise(): ()
         end
 
         local moving = false
+        local counteracting = false
+        local keysDown = 0
 
-        for _, isDown in moveKeysDown do
+        for key, isDown in moveKeysDown do
             moving = moving or isDown
+            counteracting = counteracting or (moveKeysDown[counterMoveKeys[key]] and isDown)
+            keysDown += if isDown then 1 else 0
+        end
+
+        if counteracting then
+            moving = not (keysDown % 2 == 0)
         end
 
         flags.i_move = moving
