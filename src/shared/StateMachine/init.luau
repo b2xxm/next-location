@@ -49,8 +49,6 @@ end
 
 
 function StateMachine.update(flags: PlayerFlags): StateDefinition?
-
-
     for state, canTransition in states[currentState].transitions do
         if not canTransition(flags) then
             continue
