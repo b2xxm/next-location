@@ -20,5 +20,6 @@ Camera.initialise()
 MouseAim.initialise()
 Stratagem.initialise()
 
-Stratagem.load({ "TEST", "SEQUENCE 2", "SCAN" }) -- temporary
+-- temporary
+Stratagem.load({ "TEST", "SEQUENCE 2", "SCAN" })
 HideWalls.load(Workspace.Map)

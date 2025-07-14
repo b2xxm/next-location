@@ -12,7 +12,7 @@ local currentRegions: { [string]: BasePart? } = {}
 local bufferedRegions: { [string]: BasePart? } = {}
 
 
-local Regions = {}
+local Region = {}
 
 
 local function isTouching(region: BasePart): boolean
@@ -59,7 +59,7 @@ local function poll(regionType: string, callback: (region: BasePart?) -> ()): ()
 end
 
 
-function Regions.load(addedRegions: { BasePart }, regionType: string, callback: (region: BasePart?) -> ()): ()
+function Region.load(addedRegions: { BasePart }, regionType: string, callback: (region: BasePart?) -> ()): ()
     for _, region in addedRegions do
         local function touched(hit: BasePart): ()
             local currentRegion = currentRegions[regionType]
@@ -96,4 +96,4 @@ function Regions.load(addedRegions: { BasePart }, regionType: string, callback: 
 end
 
 
-return Regions
+return Region

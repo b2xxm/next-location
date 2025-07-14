@@ -21,7 +21,7 @@ local tweenInfo: TweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Sine, Enum.Easi
 local currentMap: Model = nil
 
 
-local Regions = {}
+local HideWalls = {}
 
 
 local function tweenTransparency(instance: BasePart, transparency: number): ()
@@ -141,7 +141,7 @@ local function regionEntered(region: BasePart?)
 end
 
 
-function Regions.load(map: Model): ()
+function HideWalls.load(map: Model): ()
     local regionFolder = map:FindFirstChild("Regions") :: Folder
     currentMap = map
 
@@ -161,4 +161,4 @@ function Regions.load(map: Model): ()
 end
 
 
-return Regions
+return HideWalls
