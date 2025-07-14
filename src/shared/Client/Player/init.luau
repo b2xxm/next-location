@@ -12,6 +12,8 @@ local StateMachine = require(shared.StateMachine)
 local Input = require(client.Input)
 local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)
+local Camera = require(client.Player.Camera)
+local MouseAim = require(client.Player.MouseAim)
 local Types = require(shared.Types)
 
 
@@ -39,6 +41,7 @@ local moveKeysDown: { [InputType]: boolean } = {}
 
 
 local Player = {}
+Player.flags = flags
 
 
 local function updateState(): ()
@@ -96,11 +99,10 @@ function Player.initialise(): ()
     end
 
     local function crouch(input: InputObject): ()
-        local crouching = input.UserInputState == Enum.UserInputState.Begin
-        flags.i_crouch = crouching
+        flags.i_crouch = input.UserInputState == Enum.UserInputState.Begin
 
         if not flags.a_slide then
-            flags.a_slide = crouching and flags.i_run
+            flags.a_slide = flags.i_crouch and flags.i_run
         end
 
         updateState()
@@ -116,6 +118,9 @@ function Player.initialise(): ()
     Input.register("Movement", move, table.unpack(moveKeys))
     Input.register("RunKeyDown", run, runKey)
     Input.register("CrouchKeyDown", crouch, crouchKey)
+
+    Camera.initialise()
+    MouseAim.initialise()
 end
 
 

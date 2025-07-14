@@ -9,7 +9,7 @@ local client = shared.Client
 
 
 local Types = require(shared.Types)
-local StratagemList = require(shared.StratagemList)
+local StratagemList = require(shared.Stratagem.List)
 local Input = require(client.Input)
 local Player = require(client.Player)
 
@@ -43,6 +43,10 @@ local function toggleMenu(enabled: boolean): ()
 
     local stratagemGui = Player.getInterface("StrategemMenu")
     local container = stratagemGui:FindFirstChild("Container") :: Frame
+
+    if Player.flags.a_slide then
+        return
+    end
 
     Player.toggleMovement(not enabled)
     Input.toggle("StratagemSequence", enabled)

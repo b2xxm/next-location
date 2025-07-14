@@ -129,7 +129,7 @@ local function handleTransparency(currentFloor: number, currentRoom: number): ()
 end
 
 
-local function regionEntered(region: BasePart?)
+local function regionChanged(region: BasePart?)
     if region == nil then
         handleTransparency(math.huge, math.huge)
 
@@ -155,7 +155,7 @@ function HideWalls.load(map: Model): ()
         table.insert(regions, instance)
     end
 
-    Region.load(regions, "HideWalls", regionEntered)
+    Region.load(regions, "HideWalls", regionChanged)
 
     handleTransparency(math.huge, math.huge)
 end

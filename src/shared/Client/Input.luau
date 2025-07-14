@@ -50,7 +50,7 @@ function Input.initialise(): ()
 end
 
 
-function Input.register(name: string, callback: (input: InputObject) -> (), ...: Enum.KeyCode | Enum.UserInputType): ()
+function Input.register(name: string, callback: (input: InputObject) -> (), ...: InputType): ()
     local keyCodes = { ... }
 
     if #keyCodes == 0 then

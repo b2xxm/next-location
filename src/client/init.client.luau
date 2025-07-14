@@ -7,8 +7,6 @@ local client = shared.Client
 
 
 local Input = require(client.Input)
-local Camera = require(client.Camera)
-local MouseAim = require(client.MouseAim)
 local Stratagem = require(client.Stratagem)
 local HideWalls = require(client.HideWalls)
 local Player = require(client.Player)
@@ -16,8 +14,6 @@ local Player = require(client.Player)
 
 Input.initialise()
 Player.initialise()
-Camera.initialise()
-MouseAim.initialise()
 Stratagem.initialise()
 
 -- temporary
