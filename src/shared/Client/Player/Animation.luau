@@ -10,7 +10,7 @@ local Animation = {}
 
 
 function Animation.initialise(player: Player): ()
-    local character = player.Character or player.CharacterAdded:Wait()
+    local character = player.Character :: Model
 
     local humanoid = character:WaitForChild("Humanoid") :: Humanoid
     local animator = humanoid:WaitForChild("Animator") :: Animator

@@ -130,7 +130,7 @@ end
 
 
 function Stratagem.initialise(): ()
-    local function toggleMenuInput(input: InputObject)
+    local function toggleMenuInput(input: InputObject): ()
         if input.UserInputState == Enum.UserInputState.Begin then
             toggleMenu(true)
 

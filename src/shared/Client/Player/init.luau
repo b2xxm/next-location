@@ -2,6 +2,7 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
 
 
 local shared = ReplicatedStorage.Shared
@@ -9,6 +10,7 @@ local client = shared.Client
 
 
 local StateMachine = require(shared.StateMachine)
+local Region = require(shared.Region)
 local Input = require(client.Input)
 local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)
@@ -20,6 +22,8 @@ local Types = require(shared.Types)
 type PlayerFlags = Types.PlayerFlags
 type InputType = Types.InputType
 
+
+local VAULT_LOOK_THRESHOLD: number = math.cos(math.rad(10))
 
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
@@ -38,6 +42,7 @@ local counterMoveKeys: { [InputType]: InputType } = {
 
 local flags: { [string]: boolean } = {}
 local moveKeysDown: { [InputType]: boolean } = {}
+local vaultRegions: { BasePart } = CollectionService:GetTagged("VaultRegion")
 
 
 local Player = {}
@@ -66,12 +71,7 @@ end
 
 function Player.initialise(): ()
     local function move(input: InputObject): ()
-        if input.UserInputState == Enum.UserInputState.Begin then
-            moveKeysDown[input.KeyCode] = true
-
-        elseif input.UserInputState == Enum.UserInputState.End then
-            moveKeysDown[input.KeyCode] = false
-        end
+        moveKeysDown[input.KeyCode] = input.UserInputState == Enum.UserInputState.Begin
 
         local moving = false
         local counteracting = false
@@ -99,28 +99,43 @@ function Player.initialise(): ()
     end
 
     local function crouch(input: InputObject): ()
+        local wasCrouching = flags.i_crouch
+        local vaultRegion = Region.getCurrentRegion("VaultRegion")
+
         flags.i_crouch = input.UserInputState == Enum.UserInputState.Begin
 
-        if not flags.a_slide then
-            flags.a_slide = flags.i_crouch and flags.i_run
+        if vaultRegion and flags.i_crouch and not (flags.i_move and flags.i_run) and not wasCrouching then
+            local lookDirection = Character.getLookDirection()
+            local expectedDirection = vaultRegion.CFrame.LookVector
+            local product = lookDirection:Dot(expectedDirection)
+
+            if product >= VAULT_LOOK_THRESHOLD then
+                flags.a_vault = true
+            end
+        else
+            if not flags.a_slide then
+                flags.a_slide = flags.i_crouch and flags.i_run
+            end
         end
 
         updateState()
     end
-    
-    Animation.initialise(player)
-    StateMachine.initialise()
 
     for _, key in moveKeys do
         moveKeysDown[key] = false
     end
 
+    Character.initialise()
+    Animation.initialise(player)
+    StateMachine.initialise()
+    Camera.initialise()
+    MouseAim.initialise()
+
     Input.register("Movement", move, table.unpack(moveKeys))
     Input.register("RunKeyDown", run, runKey)
     Input.register("CrouchKeyDown", crouch, crouchKey)
-
-    Camera.initialise()
-    MouseAim.initialise()
+    
+    Region.load(vaultRegions, "VaultRegion", nil)
 end
 
 
@@ -140,14 +155,11 @@ function Player.toggleMovement(enabled: boolean): ()
     Character.setWalkspeed(0)
 end
 
-
-Character.initialise()
-
 -- DEBUG
 local DebugMenu = Player.getInterface("Debug")
 local prefab = DebugMenu:FindFirstChild("Prefab", true) :: Frame
 
-local internal: PlayerFlags = { i_move = false, i_run = false, i_crouch = false, a_slide = false }
+local internal: PlayerFlags = { i_move = false, i_run = false, i_crouch = false, a_slide = false, a_vault = false }
 local stateValues = {}
 
 for state, value in internal do
