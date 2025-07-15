@@ -26,7 +26,10 @@ Idle.transitions = {
         return flags.i_move and flags.i_run
     end,
     Crouch = function(flags: PlayerFlags): boolean
-        return flags.i_crouch
+        return flags.i_crouch and not flags.a_vault
+    end,
+    Thief = function(flags: PlayerFlags): boolean
+        return flags.a_vault
     end,
 }
 

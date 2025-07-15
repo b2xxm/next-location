@@ -28,7 +28,7 @@ local function isTouching(region: BasePart): boolean
 end
 
 
-local function poll(regionType: string, callback: (region: BasePart?) -> ()): ()
+local function poll(regionType: string, callback: (region: BasePart?) -> ()?): ()
     local region = currentRegions[regionType] :: BasePart
 
     while true do
@@ -42,7 +42,9 @@ local function poll(regionType: string, callback: (region: BasePart?) -> ()): ()
     local bufferedRegion = bufferedRegions[regionType]
 
     if bufferedRegion ~= nil and isTouching(bufferedRegion) then
-        callback(bufferedRegion)
+        if callback then
+            callback(bufferedRegion)
+        end
         
         currentRegions[regionType] = bufferedRegion
         bufferedRegions[regionType] = nil
@@ -55,11 +57,13 @@ local function poll(regionType: string, callback: (region: BasePart?) -> ()): ()
     currentRegions[regionType] = nil
     bufferedRegions[regionType] = nil
 
-    callback(nil)
+    if callback then
+        callback(nil)
+    end
 end
 
 
-function Region.load(addedRegions: { BasePart }, regionType: string, callback: (region: BasePart?) -> ()): ()
+function Region.load(addedRegions: { BasePart }, regionType: string, callback: (region: BasePart?) -> ()?): ()
     for _, region in addedRegions do
         local function touched(hit: BasePart): ()
             local currentRegion = currentRegions[regionType]
@@ -86,13 +90,21 @@ function Region.load(addedRegions: { BasePart }, regionType: string, callback: (
             
             currentRegions[regionType] = region
 
-            callback(region)
+            if callback then
+                callback(region)
+            end
+
             task.wait(0.2)
             task.spawn(poll, regionType, callback)
         end
 
         region.Touched:Connect(touched)
     end
+end
+
+
+function Region.getCurrentRegion(regionType: string): BasePart?
+    return currentRegions[regionType]
 end
 
 

@@ -73,13 +73,7 @@ function Input.register(name: string, callback: (input: InputObject) -> (), ...:
         end
 
         local registry = register[keyCode]
-
-        if registry[name] then
-            warn(`{name} already assigned with {keyCode.Name} keycode`)
-
-            continue
-        end
-
+        
         registry[name] = callback
     end
 end

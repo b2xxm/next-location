@@ -60,4 +60,13 @@ function Character.disableForwardVelocity(): ()
 end
 
 
+function Character.getLookDirection(): Vector3
+    local character = player.Character :: Model
+    local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
+    local direction = rootPart.CFrame.LookVector
+
+    return direction
+end
+
+
 return Character
