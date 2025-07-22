@@ -16,20 +16,13 @@ type PlayerFlags = Types.PlayerFlags
 
 local DURATION: number = 0.7
 
-
 local vaultObjects: { BasePart } = CollectionService:GetTagged("VaultObject")
 
 
-local ThiefVault = {}
-ThiefVault.metadata = {
-    autoExit = {
-        delay = DURATION,
-        callback = function(flags: PlayerFlags)
-            flags.a_vault = false
-        end
-    }
-}
+local elapsed: number = 0
 
+
+local ThiefVault = {}
 ThiefVault.transitions = {
     Walk = function(flags: PlayerFlags): boolean
         return flags.i_move and not flags.i_run and not flags.a_vault
@@ -44,6 +37,8 @@ ThiefVault.transitions = {
 
 
 function ThiefVault.enter(): ()
+    elapsed = 0
+
     Character.enableForwardVelocity(6) -- arbitrary
     Animation.play("Thief")
 
@@ -60,6 +55,19 @@ function ThiefVault.exit(): ()
     for _, part in vaultObjects do
         part.CanCollide = true
     end
+end
+
+
+function ThiefVault.update(deltaTime: number, flags: PlayerFlags): boolean
+    elapsed += deltaTime
+
+    if elapsed >= DURATION then
+        flags.a_vault = false
+
+        return true
+    end
+
+    return false
 end
 
 

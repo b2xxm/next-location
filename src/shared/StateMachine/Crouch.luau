@@ -13,7 +13,7 @@ type PlayerFlags = Types.PlayerFlags
 
 
 local Crouch = {}
-Crouch.metadata = {}
+Crouch.update = nil
 Crouch.transitions = {
     Idle = function(flags: PlayerFlags): boolean
         return not flags.i_crouch

@@ -17,7 +17,7 @@ local WALK_SPEED: number = 8
 
 
 local Walk = {}
-Walk.metadata = {}
+Walk.update = nil
 Walk.transitions = {
     Idle = function(flags: PlayerFlags): boolean
         return not flags.i_move

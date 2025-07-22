@@ -43,29 +43,54 @@ local counterMoveKeys: { [InputType]: InputType } = {
 
 local flags: { [string]: boolean } = {}
 local moveKeysDown: { [InputType]: boolean } = {}
+local updateThread: thread? = nil
 
 
 local Player = {}
 Player.flags = flags
 
 
-local function updateState(): ()
+local function updateState(): boolean
     local newState = StateMachine.update(flags)
 
     if not newState then
-        return
+        return false
     end
 
-    local autoExit = newState.metadata.autoExit
+    if updateThread and coroutine.running() ~= updateThread then
+        task.cancel(updateThread)
+
+        updateThread = nil
+    end
+
+    local update = newState.update
     
-    if autoExit then
-        local function automatic(): ()
-            autoExit.callback(flags)
-            StateMachine.update(flags)
-        end
-
-        task.delay(autoExit.delay, automatic)
+    if not update then
+        return true
     end
+
+    local function tickState(callback: (deltaTime: number, flags: PlayerFlags) -> boolean): ()
+        while true do
+            local deltaTime = task.wait()
+            local flagUpdated = callback(deltaTime, flags)
+
+            if not flagUpdated then
+                continue
+            end
+
+            local updated = updateState()
+
+            if updated then
+                updateThread = nil
+
+                break
+            end
+        end
+    end
+
+    updateThread = task.spawn(tickState, update)
+
+    return true
 end
 
 

@@ -17,7 +17,7 @@ local RUN_SPEED: number = 22
 
 
 local Run = {}
-Run.metadata = {}
+Run.update = nil
 Run.transitions = {
     Idle = function(flags: PlayerFlags): boolean
         return not flags.i_move

@@ -16,16 +16,10 @@ type PlayerFlags = Types.PlayerFlags
 local DURATION: number = 1
 
 
-local Slide = {}
-Slide.metadata = {
-    autoExit = {
-        delay = DURATION,
-        callback = function(flags: PlayerFlags)
-            flags.a_slide = false
-        end
-    }
-}
+local elapsed: number = 0
 
+
+local Slide = {}
 Slide.transitions = {
     Walk = function(flags: PlayerFlags): boolean
         return flags.i_move and not flags.i_run and not flags.a_slide
@@ -40,6 +34,8 @@ Slide.transitions = {
 
 
 function Slide.enter(): ()
+    elapsed = 0
+
     Character.enableForwardVelocity(22) -- arbitrary
     Animation.play("Slide")
 end
@@ -48,6 +44,19 @@ end
 function Slide.exit(): ()
     Character.disableForwardVelocity()
     Animation.stop("Slide")
+end
+
+
+function Slide.update(deltaTime: number, flags: PlayerFlags): boolean
+    elapsed += deltaTime
+
+    if elapsed >= DURATION then
+        flags.a_slide = false
+
+        return true
+    end
+
+    return false
 end
 
 

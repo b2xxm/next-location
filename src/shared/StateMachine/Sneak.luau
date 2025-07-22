@@ -17,7 +17,7 @@ local SNEAK_SPEED: number = 4
 
 
 local Sneak = {}
-Sneak.metadata = {}
+Sneak.update = nil
 Sneak.transitions = {
     Walk = function(flags: PlayerFlags): boolean
         return not flags.i_crouch and not flags.i_run

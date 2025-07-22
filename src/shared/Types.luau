@@ -4,7 +4,7 @@ export type StateDefinition = {
     transitions: { [string]: (PlayerFlags) -> boolean },
     enter: () -> (),
     exit: () -> (),
-    metadata: { autoExit: { delay: number, callback: (flags: PlayerFlags) -> () }? }
+    update: ((deltaTime: number, flags: PlayerFlags) -> boolean)?,
 }
 
 export type PlayerFlags = {
