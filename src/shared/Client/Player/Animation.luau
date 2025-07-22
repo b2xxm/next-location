@@ -1,6 +1,10 @@
 --!strict
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+
+local player: Player = Players.LocalPlayer
 
 
 local animations: { [string]: AnimationTrack } = {}
@@ -9,7 +13,7 @@ local animations: { [string]: AnimationTrack } = {}
 local Animation = {}
 
 
-function Animation.initialise(player: Player): ()
+function Animation.initialise(): ()
     local character = player.Character :: Model
 
     local humanoid = character:WaitForChild("Humanoid") :: Humanoid

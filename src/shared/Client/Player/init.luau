@@ -151,7 +151,7 @@ function Player.initialise(): ()
     end
 
     Character.initialise()
-    Animation.initialise(player)
+    Animation.initialise()
     StateMachine.initialise()
     Camera.initialise()
     MouseAim.initialise()
