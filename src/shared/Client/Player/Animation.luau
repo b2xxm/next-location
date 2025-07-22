@@ -13,9 +13,7 @@ local animations: { [string]: AnimationTrack } = {}
 local Animation = {}
 
 
-function Animation.initialise(): ()
-    local character = player.Character :: Model
-
+local function characterAdded(character: Model): ()
     local humanoid = character:WaitForChild("Humanoid") :: Humanoid
     local animator = humanoid:WaitForChild("Animator") :: Animator
 
@@ -24,6 +22,15 @@ function Animation.initialise(): ()
 
         animations[animation.Name] = track
     end
+end
+
+
+function Animation.initialise(): ()
+    local character = player.Character :: Model
+
+    characterAdded(character)
+
+    player.CharacterAdded:Connect(characterAdded)
 end
 
 

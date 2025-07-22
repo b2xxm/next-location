@@ -8,6 +8,8 @@ local RunService = game:GetService("RunService")
 local prefabs = ReplicatedStorage.Prefabs
 
 
+local player: Player = Players.LocalPlayer
+
 local SMOOTHING_FACTOR: number = 0.05
 local UPDATE_NAME: string = "CameraUpdate"
 local UPDATE_PRIORITY: number = Enum.RenderPriority.Camera.Value
@@ -24,7 +26,6 @@ local Camera = {}
 
 
 function Camera.initialise(): ()
-	local player = Players.LocalPlayer
     local focusPartPrefab = prefabs.Camera:WaitForChild("FocusPart")
 	
 	character = player.Character or player.CharacterAdded:Wait()

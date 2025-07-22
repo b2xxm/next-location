@@ -10,12 +10,16 @@ local Workspace = game:GetService("Workspace")
 local prefabs = ReplicatedStorage.Prefabs
 
 
+local FOOT_OFFSET: number = 3
+
 local player: Player = Players.LocalPlayer
 local camera: Camera = Workspace.CurrentCamera
 
 local raycastParams: RaycastParams = RaycastParams.new()
 raycastParams.RespectCanCollide = false
 raycastParams.FilterType = Enum.RaycastFilterType.Include
+
+local mousePlanePrefab: BasePart = prefabs.MouseAim:FindFirstChild("Plane")
 
 
 local character: Model = nil
@@ -26,15 +30,22 @@ local MouseAim = {}
 
 
 local function characterAdded(newCharacter: Model): ()
-    character = newCharacter
+    if plane then
+        plane:Destroy()
+    end
     
-    local weld = plane:FindFirstChildOfClass("WeldConstraint") :: WeldConstraint
-    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart") :: BasePart
+    character = newCharacter
+    plane = mousePlanePrefab:Clone()
+    plane.Parent = Workspace
 
-    -- offset for approxiamate foot level
-    plane.Position = humanoidRootPart.Position - Vector3.yAxis * 3
-    weld.Enabled = true
+    raycastParams.FilterDescendantsInstances = { plane }
+
+    local weld = plane:FindFirstChildOfClass("WeldConstraint") :: WeldConstraint
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
+
+    plane.Position = humanoidRootPart.Position - Vector3.yAxis * FOOT_OFFSET
     weld.Part1 = humanoidRootPart
+    weld.Enabled = true
 end
 
 
@@ -52,13 +63,6 @@ end
 
 
 function MouseAim.initialise(): ()
-    local mousePlanePrefab = prefabs.MouseAim:FindFirstChild("Plane") :: BasePart
-
-    plane = mousePlanePrefab:Clone()
-    plane.Parent = Workspace
-
-    raycastParams.FilterDescendantsInstances = { plane }
-
     characterAdded(player.Character :: Model)
     
     player.CharacterAdded:Connect(characterAdded)

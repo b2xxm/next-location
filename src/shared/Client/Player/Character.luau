@@ -6,22 +6,32 @@ local Players = game:GetService("Players")
 local player: Player = Players.LocalPlayer
 
 
+local velocityPrefab = Instance.new("LinearVelocity")
+velocityPrefab.ForceLimitsEnabled = false
+velocityPrefab.Enabled = false
+
+
 local Character = {}
 
 
-function Character.initialise(): ()
-    local character = player.Character or player.CharacterAdded:Wait() :: Model
+local function characterAdded(character: Model): ()
     local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
 
     local attachment = Instance.new("Attachment")
     attachment.Parent = rootPart
 
-    local velocity = Instance.new("LinearVelocity")
-    velocity.ForceLimitsEnabled = false
+    local velocity = velocityPrefab:Clone()
     velocity.Attachment0 = attachment
-    velocity.Enabled = false
-    velocity.Name = "SlideVelocity"
     velocity.Parent = rootPart
+end
+
+
+function Character.initialise(): ()
+    local character = player.Character or player.CharacterAdded:Wait() :: Model
+
+    characterAdded(character)
+
+    player.CharacterAdded:Connect(characterAdded)
 end
 
 
@@ -40,9 +50,7 @@ function Character.enableForwardVelocity(speed: number): ()
 
     humanoid.AutoRotate = false
 
-    -- disable slide when falling state is entered.
-
-    local velocity = rootPart:WaitForChild("SlideVelocity") :: LinearVelocity
+    local velocity = rootPart:WaitForChild("LinearVelocity") :: LinearVelocity
     velocity.VectorVelocity = rootPart.CFrame.LookVector * speed
     velocity.Enabled = true
 end
@@ -55,7 +63,7 @@ function Character.disableForwardVelocity(): ()
 
     humanoid.AutoRotate = true
     
-    local velocity = rootPart:WaitForChild("SlideVelocity") :: LinearVelocity
+    local velocity = rootPart:WaitForChild("LinearVelocity") :: LinearVelocity
     velocity.Enabled = false
 end
 
