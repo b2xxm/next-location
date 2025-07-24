@@ -23,6 +23,7 @@ local vaultObjects: { BasePart } = CollectionService:GetTagged("VaultObject")
 
 local elapsed: number = 0
 local started: boolean = false
+local failed: boolean = false
 
 
 local ThiefVault = {}
@@ -42,6 +43,7 @@ ThiefVault.transitions = {
 function ThiefVault.enter(): ()
     elapsed = 0
     started = false
+    failed = false
 
     local vaultRegion = nil
     local characterPosition = Character.getPosition()
@@ -63,6 +65,12 @@ function ThiefVault.enter(): ()
         elseif Character.isTouching(sideB) then
             vaultRegion = sideB
         end
+    end
+
+    if not vaultRegion then
+        failed = true
+
+        return
     end
 
     local vaultPosition = vaultRegion.Position
@@ -92,6 +100,13 @@ end
 
 
 function ThiefVault.update(deltaTime: number, flags: PlayerFlags): boolean
+    if failed then
+        flags.a_vault = false
+        failed = false
+
+        return true
+    end
+
     if not started then
         return false
     end

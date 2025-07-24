@@ -1,7 +1,14 @@
 --!strict
 
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+
+local shared = ReplicatedStorage.Shared
+local client = shared.Client
+
+
+local TweenUtils = require(client.TweenUtils)
 
 
 local player: Player = Players.LocalPlayer
@@ -95,7 +102,7 @@ function Character.moveTo(position: Vector3, duration: number): ()
 
     rootPart.Anchored = true
 
-    local tween = TweenService:Create(rootPart, info, goal)
+    local tween = TweenUtils.create(rootPart, info, goal)
     tween:Play()
     tween.Completed:Wait()
 
