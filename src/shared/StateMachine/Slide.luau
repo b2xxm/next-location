@@ -14,6 +14,7 @@ type PlayerFlags = Types.PlayerFlags
 
 
 local DURATION: number = 1
+local SLIDE_SPEED: number = 22
 
 
 local elapsed: number = 0
@@ -36,13 +37,13 @@ Slide.transitions = {
 function Slide.enter(): ()
     elapsed = 0
 
-    Character.enableForwardVelocity(22) -- arbitrary
+    Character.toggleForwardVelocity(true, SLIDE_SPEED)
     Animation.play("Slide")
 end
 
 
 function Slide.exit(): ()
-    Character.disableForwardVelocity()
+    Character.toggleForwardVelocity(false)
     Animation.stop("Slide")
 end
 

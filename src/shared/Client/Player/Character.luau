@@ -1,14 +1,17 @@
 --!strict
 
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 
 
 local player: Player = Players.LocalPlayer
 
-
-local velocityPrefab = Instance.new("LinearVelocity")
+local velocityPrefab: LinearVelocity = Instance.new("LinearVelocity")
 velocityPrefab.ForceLimitsEnabled = false
 velocityPrefab.Enabled = false
+
+local overlapParams: OverlapParams = OverlapParams.new()
+overlapParams.FilterType = Enum.RaycastFilterType.Include
 
 
 local Character = {}
@@ -23,6 +26,8 @@ local function characterAdded(character: Model): ()
     local velocity = velocityPrefab:Clone()
     velocity.Attachment0 = attachment
     velocity.Parent = rootPart
+
+    overlapParams.FilterDescendantsInstances = { character }
 end
 
 
@@ -43,28 +48,17 @@ function Character.setWalkspeed(speed: number): ()
 end
 
 
-function Character.enableForwardVelocity(speed: number): ()
+function Character.toggleForwardVelocity(enabled: boolean, givenSpeed: number?): ()
     local character = player.Character :: Model
     local humanoid = character:WaitForChild("Humanoid") :: Humanoid
     local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
 
-    humanoid.AutoRotate = false
-
     local velocity = rootPart:WaitForChild("LinearVelocity") :: LinearVelocity
+    local speed = givenSpeed or 0
+
     velocity.VectorVelocity = rootPart.CFrame.LookVector * speed
-    velocity.Enabled = true
-end
-
-
-function Character.disableForwardVelocity(): ()
-    local character = player.Character :: Model
-    local humanoid = character:WaitForChild("Humanoid") :: Humanoid
-    local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
-
-    humanoid.AutoRotate = true
-    
-    local velocity = rootPart:WaitForChild("LinearVelocity") :: LinearVelocity
-    velocity.Enabled = false
+    velocity.Enabled = enabled
+    humanoid.AutoRotate = not enabled
 end
 
 
@@ -74,6 +68,38 @@ function Character.getLookDirection(): Vector3
     local direction = rootPart.CFrame.LookVector
 
     return direction
+end
+
+
+function Character.getPosition(): Vector3
+    local character = player.Character :: Model
+    local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
+
+    return rootPart.Position
+end
+
+
+function Character.isTouching(part: BasePart): boolean
+    local parts = workspace:GetPartsInPart(part, overlapParams)
+
+    return #parts ~= 0
+end
+
+
+function Character.moveTo(position: Vector3, duration: number): ()
+    local character = player.Character :: Model
+    local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
+
+    local info = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+    local goal = { CFrame = CFrame.new(position) * rootPart.CFrame.Rotation }
+
+    rootPart.Anchored = true
+
+    local tween = TweenService:Create(rootPart, info, goal)
+    tween:Play()
+    tween.Completed:Wait()
+
+    rootPart.Anchored = false
 end
 
 
