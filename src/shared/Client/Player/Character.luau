@@ -2,6 +2,7 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
 
 
 local shared = ReplicatedStorage.Shared
@@ -87,7 +88,7 @@ end
 
 
 function Character.isTouching(part: BasePart): boolean
-    local parts = workspace:GetPartsInPart(part, overlapParams)
+    local parts = Workspace:GetPartsInPart(part, overlapParams)
 
     return #parts ~= 0
 end

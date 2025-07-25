@@ -1,6 +1,7 @@
 --!strict
 
 local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 
 
 local POLL_INTERVAL: number = 0.05
@@ -16,7 +17,7 @@ local Region = {}
 
 
 local function isTouching(region: BasePart): boolean
-    local parts = workspace:GetPartsInPart(region)
+    local parts = Workspace:GetPartsInPart(region)
 
     for _, part in parts do
         if part:IsDescendantOf(player.Character) then

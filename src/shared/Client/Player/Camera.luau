@@ -3,6 +3,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 
 
 local prefabs = ReplicatedStorage.Prefabs
@@ -18,7 +19,7 @@ local TARGET_FRAME_RATE: number = 60
 
 local character: Model = nil
 local focusPart: Part = nil
-local camera: Camera = workspace.CurrentCamera
+local camera: Camera = Workspace.CurrentCamera
 local offset: Vector3 = Vector3.new(-7, 15, -7)
 
 
@@ -31,7 +32,7 @@ function Camera.initialise(): ()
 	character = player.Character or player.CharacterAdded:Wait()
 	focusPart = focusPartPrefab:Clone()
 	
-	focusPart.Parent = workspace
+	focusPart.Parent = Workspace
 	
 	Camera.refresh(character)
 
