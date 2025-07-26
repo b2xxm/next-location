@@ -1,15 +1,6 @@
 --!strict
 
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Workspace = game:GetService("Workspace")
-
-
-local shared = ReplicatedStorage.Shared
-local client = shared.Client
-
-
-local TweenUtils = require(client.TweenUtils)
 
 
 local player: Player = Players.LocalPlayer
@@ -87,28 +78,28 @@ function Character.getPosition(): Vector3
 end
 
 
-function Character.isTouching(part: BasePart): boolean
-    local parts = Workspace:GetPartsInPart(part, overlapParams)
+-- function Character.isTouching(part: BasePart): boolean
+--     local parts = Workspace:GetPartsInPart(part, overlapParams)
 
-    return #parts ~= 0
-end
+--     return #parts ~= 0
+-- end
 
 
-function Character.moveTo(position: Vector3, duration: number): ()
-    local character = player.Character :: Model
-    local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
+-- function Character.moveTo(position: Vector3, duration: number): ()
+--     local character = player.Character :: Model
+--     local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
 
-    local info = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-    local goal = { CFrame = CFrame.new(position) * rootPart.CFrame.Rotation }
+--     local info = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+--     local goal = { CFrame = CFrame.new(position) * rootPart.CFrame.Rotation }
 
-    rootPart.Anchored = true
+--     rootPart.Anchored = true
 
-    local tween = TweenUtils.create(rootPart, info, goal)
-    tween:Play()
-    tween.Completed:Wait()
+--     local tween = TweenUtils.create(rootPart, info, goal)
+--     tween:Play()
+--     tween.Completed:Wait()
 
-    rootPart.Anchored = false
-end
+--     rootPart.Anchored = false
+-- end
 
 
 return Character

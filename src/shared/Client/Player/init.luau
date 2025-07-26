@@ -2,6 +2,7 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
 local CollectionService = game:GetService("CollectionService")
 
 
@@ -10,7 +11,6 @@ local client = shared.Client
 
 
 local StateMachine = require(shared.StateMachine)
-local Region = require(shared.Region)
 local Input = require(client.Input)
 local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)
@@ -31,7 +31,6 @@ local playerGui: PlayerGui = player.PlayerGui
 local runKey: InputType = Enum.KeyCode.LeftShift
 local crouchKey: InputType = Enum.KeyCode.Space
 local moveKeys: { InputType } = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
-local vaultRegions: { BasePart } = CollectionService:GetTagged("VaultRegion")
 
 local counterMoveKeys: { [InputType]: InputType } = {
     [moveKeys[1]] = moveKeys[3],
@@ -39,6 +38,10 @@ local counterMoveKeys: { [InputType]: InputType } = {
     [moveKeys[3]] = moveKeys[1],
     [moveKeys[4]] = moveKeys[2]
 }
+
+local vaultRayParams = RaycastParams.new()
+vaultRayParams.FilterDescendantsInstances = CollectionService:GetTagged("VaultObject")
+vaultRayParams.FilterType = Enum.RaycastFilterType.Include
 
 
 local flags: { [string]: boolean } = {}
@@ -115,6 +118,18 @@ local function characterAdded(character: Model): ()
 end
 
 
+local function getVaultObject(position: Vector3, direction: Vector3): BasePart?
+    local waistOffset = -Vector3.yAxis
+    local result = Workspace:Raycast(position + waistOffset, direction, vaultRayParams)
+
+    if result then
+        return result.Instance
+    end
+    
+    return nil
+end
+
+
 function Player.initialise(): ()
     local function move(input: InputObject): ()
         moveKeysDown[input.KeyCode] = input.UserInputState == Enum.UserInputState.Begin
@@ -146,16 +161,18 @@ function Player.initialise(): ()
 
     local function crouch(input: InputObject): ()
         local wasCrouching = flags.i_crouch
-        local vaultRegion = Region.getCurrentRegion("VaultRegion")
 
         flags.i_crouch = input.UserInputState == Enum.UserInputState.Begin
 
-        if vaultRegion and flags.i_crouch and not (flags.i_move and flags.i_run) and not wasCrouching then
-            local lookDirection = Character.getLookDirection()
-            local expectedDirection = vaultRegion.CFrame.LookVector
+        local lookDirection = Character.getLookDirection()
+        local position = Character.getPosition()
+        local vaultObject = getVaultObject(position, lookDirection)
+
+        if vaultObject and flags.i_crouch and not (flags.i_move and flags.i_run) and not wasCrouching then
+            local expectedDirection = vaultObject.CFrame.LookVector
             local product = lookDirection:Dot(expectedDirection)
 
-            if product >= VAULT_LOOK_THRESHOLD then
+            if math.abs(product) >= VAULT_LOOK_THRESHOLD then
                 flags.a_vault = true
             end
         else
@@ -180,8 +197,6 @@ function Player.initialise(): ()
     Input.register("Movement", move, table.unpack(moveKeys))
     Input.register("RunKeyDown", run, runKey)
     Input.register("CrouchKeyDown", crouch, crouchKey)
-    
-    Region.load(vaultRegions, "VaultRegion", nil)
     
     characterAdded(player.Character :: Model)
 
