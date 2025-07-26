@@ -94,6 +94,27 @@ local function updateState(): boolean
 end
 
 
+local function stateChanged(_: Enum.HumanoidStateType, current: Enum.HumanoidStateType): ()
+    if current == Enum.HumanoidStateType.Freefall then
+        flags.a_fall = true
+        flags.a_slide = false
+
+    elseif current == Enum.HumanoidStateType.Landed then
+        flags.a_fall = false
+        flags.a_land = true
+    end
+
+    updateState()
+end
+
+
+local function characterAdded(character: Model): ()
+    local humanoid = character:WaitForChild("Humanoid") :: Humanoid
+
+    humanoid.StateChanged:Connect(stateChanged)
+end
+
+
 function Player.initialise(): ()
     local function move(input: InputObject): ()
         moveKeysDown[input.KeyCode] = input.UserInputState == Enum.UserInputState.Begin
@@ -161,6 +182,10 @@ function Player.initialise(): ()
     Input.register("CrouchKeyDown", crouch, crouchKey)
     
     Region.load(vaultRegions, "VaultRegion", nil)
+    
+    characterAdded(player.Character :: Model)
+
+    player.CharacterAdded:Connect(characterAdded)
 end
 
 
@@ -184,7 +209,11 @@ end
 local DebugMenu = Player.getInterface("Debug")
 local prefab = DebugMenu:FindFirstChild("Prefab", true) :: Frame
 
-local internal: PlayerFlags = { i_move = false, i_run = false, i_crouch = false, a_slide = false, a_vault = false }
+local internal: PlayerFlags = {
+    i_move = false, i_run = false, i_crouch = false,
+    a_slide = false, a_vault = false, a_fall = false, a_land = false
+}
+
 local stateValues = {}
 
 for state, value in internal do

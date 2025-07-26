@@ -27,6 +27,9 @@ Run.transitions = {
     end,
     Slide = function(flags: PlayerFlags): boolean
         return flags.a_slide
+    end,
+    Fall = function(flags: PlayerFlags): boolean
+        return flags.a_fall
     end
 }
 

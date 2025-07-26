@@ -31,6 +31,9 @@ Walk.transitions = {
     Thief = function(flags: PlayerFlags): boolean
         return flags.a_vault
     end,
+    Fall = function(flags: PlayerFlags): boolean
+        return flags.a_fall
+    end
 }
 
 

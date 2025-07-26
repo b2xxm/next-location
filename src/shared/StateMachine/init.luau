@@ -20,7 +20,9 @@ local states:{ [string]: StateDefinition } = {
     Crouch = require(script.Crouch),
     Sneak = require(script.Sneak),
     Slide = require(script.Slide),
-    Thief = require(script.ThiefVault)
+    Thief = require(script.ThiefVault),
+    Fall = require(script.Fall),
+    Land = require(script.Land)
 }
 
 

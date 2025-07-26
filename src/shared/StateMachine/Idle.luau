@@ -30,7 +30,7 @@ Idle.transitions = {
     end,
     Thief = function(flags: PlayerFlags): boolean
         return flags.a_vault
-    end,
+    end
 }
 
 

@@ -12,10 +12,12 @@ export type PlayerFlags = {
     i_run: boolean,
     i_crouch: boolean,
     a_slide: boolean,
-    a_vault: boolean
+    a_vault: boolean,
+    a_fall: boolean,
+    a_land: boolean
 }
 
---[[ prefix: i_move, i_run, i_crouch, a_slide
+--[[ prefix
 
 i - input
 a - action

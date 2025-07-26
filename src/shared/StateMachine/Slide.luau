@@ -30,6 +30,9 @@ Slide.transitions = {
     end,
     Idle = function(flags: PlayerFlags): boolean
         return not flags.i_move and not flags.a_slide
+    end,
+    Fall = function(flags: PlayerFlags): boolean
+        return flags.a_fall
     end
 }
 
