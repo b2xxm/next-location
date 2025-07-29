@@ -160,15 +160,13 @@ function Player.initialise(): ()
     end
 
     local function crouch(input: InputObject): ()
-        local wasCrouching = flags.i_crouch
-
         flags.i_crouch = input.UserInputState == Enum.UserInputState.Begin
 
         local lookDirection = Character.getLookDirection()
         local position = Character.getPosition()
         local vaultObject = getVaultObject(position, lookDirection)
 
-        if vaultObject and flags.i_crouch and not (flags.i_move and flags.i_run) and not wasCrouching then
+        if vaultObject and flags.i_crouch and not (flags.i_move and flags.i_run) then
             local expectedDirection = vaultObject.CFrame.LookVector
             local product = lookDirection:Dot(expectedDirection)
 

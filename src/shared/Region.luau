@@ -79,7 +79,7 @@ function Region.load(addedRegions: { BasePart }, regionType: string, callback: (
 
             local bufferedRegion = bufferedRegions[regionType]
 
-            if currentRegion ~= nil and currentRegion ~= region then
+            if currentRegion ~= nil then
                 if region == bufferedRegion then
                     return
                 end
@@ -95,7 +95,6 @@ function Region.load(addedRegions: { BasePart }, regionType: string, callback: (
                 callback(region)
             end
 
-            task.wait(0.2)
             task.spawn(poll, regionType, callback)
         end
 
