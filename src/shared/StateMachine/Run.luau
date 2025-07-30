@@ -30,6 +30,9 @@ Run.transitions = {
     end,
     Fall = function(flags: PlayerFlags): boolean
         return flags.a_fall
+    end,
+    Kong = function(flags: PlayerFlags): boolean
+        return flags.a_kong
     end
 }
 

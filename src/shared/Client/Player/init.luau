@@ -23,7 +23,11 @@ type PlayerFlags = Types.PlayerFlags
 type InputType = Types.InputType
 
 
-local VAULT_LOOK_THRESHOLD: number = math.cos(math.rad(10))
+local THIEF_LOOK_THRESHOLD: number = math.cos(math.rad(10))
+local KONG_LOOK_THRESHOLD: number = math.cos(math.rad(5))
+local THIEF_TRIGGER_DISTANCE: number = 1
+local KONG_TRIGGER_DISTANCE: number = 12
+local KONG_MINIMUM_DISTANCE: number = 4
 
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
@@ -38,6 +42,8 @@ local counterMoveKeys: { [InputType]: InputType } = {
     [moveKeys[3]] = moveKeys[1],
     [moveKeys[4]] = moveKeys[2]
 }
+
+local waistOffset = -Vector3.yAxis
 
 local vaultRayParams = RaycastParams.new()
 vaultRayParams.FilterDescendantsInstances = CollectionService:GetTagged("VaultObject")
@@ -118,9 +124,8 @@ local function characterAdded(character: Model): ()
 end
 
 
-local function getVaultObject(position: Vector3, direction: Vector3): BasePart?
-    local waistOffset = -Vector3.yAxis
-    local result = Workspace:Raycast(position + waistOffset, direction, vaultRayParams)
+local function findVaultObject(position: Vector3, direction: Vector3, distance: number): BasePart?
+    local result = Workspace:Raycast(position + waistOffset, direction * distance, vaultRayParams)
 
     if result then
         return result.Instance
@@ -164,18 +169,32 @@ function Player.initialise(): ()
 
         local lookDirection = Character.getLookDirection()
         local position = Character.getPosition()
-        local vaultObject = getVaultObject(position, lookDirection)
 
-        if vaultObject and flags.i_crouch and not (flags.i_move and flags.i_run) then
-            local expectedDirection = vaultObject.CFrame.LookVector
-            local product = lookDirection:Dot(expectedDirection)
+        if flags.i_crouch and not (flags.i_move and flags.i_run) and not flags.a_slide then
+            local vaultObject = findVaultObject(position, lookDirection, THIEF_TRIGGER_DISTANCE)
 
-            if math.abs(product) >= VAULT_LOOK_THRESHOLD then
-                flags.a_vault = true
+            if vaultObject then
+                local expectedDirection = vaultObject.CFrame.LookVector
+                local product = lookDirection:Dot(expectedDirection)
+
+                if math.abs(product) >= THIEF_LOOK_THRESHOLD then
+                    flags.a_thief = true
+                end
             end
-        else
-            if not flags.a_slide then
-                flags.a_slide = flags.i_crouch and flags.i_run
+
+        elseif flags.i_crouch and flags.i_move and flags.i_run then
+            local vaultObject = findVaultObject(position, lookDirection, KONG_TRIGGER_DISTANCE)
+            local lowerThresholdCheck = findVaultObject(position, lookDirection, KONG_MINIMUM_DISTANCE)
+
+            if vaultObject and lowerThresholdCheck == nil and not flags.a_slide then
+                local expectedDirection = vaultObject.CFrame.LookVector
+                local product = lookDirection:Dot(expectedDirection)
+
+                if math.abs(product) >= KONG_LOOK_THRESHOLD then
+                    flags.a_kong = true
+                end
+            else
+                flags.a_slide = true
             end
         end
 
@@ -224,7 +243,9 @@ local prefab = DebugMenu:FindFirstChild("Prefab", true) :: Frame
 
 local internal: PlayerFlags = {
     i_move = false, i_run = false, i_crouch = false,
-    a_slide = false, a_vault = false, a_fall = false, a_land = false
+
+    a_slide = false, a_thief = false, a_kong = false,
+    a_fall = false, a_land = false
 }
 
 local stateValues = {}

@@ -12,7 +12,8 @@ export type PlayerFlags = {
     i_run: boolean,
     i_crouch: boolean,
     a_slide: boolean,
-    a_vault: boolean,
+    a_thief: boolean,
+    a_kong: boolean,
     a_fall: boolean,
     a_land: boolean
 }

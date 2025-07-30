@@ -26,10 +26,10 @@ Walk.transitions = {
         return flags.i_run
     end,
     Sneak = function(flags: PlayerFlags): boolean
-        return flags.i_crouch and not flags.a_vault
+        return flags.i_crouch and not flags.a_thief
     end,
     Thief = function(flags: PlayerFlags): boolean
-        return flags.a_vault
+        return flags.a_thief
     end,
     Fall = function(flags: PlayerFlags): boolean
         return flags.a_fall

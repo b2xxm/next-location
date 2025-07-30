@@ -17,7 +17,7 @@ type PlayerFlags = Types.PlayerFlags
 local DURATION: number = 0.7
 local VAULT_SPEED: number = 6
 
-local vaultObjects: { BasePart } = CollectionService:GetTagged("VaultObject")
+local vaultObjects: { Instance } = CollectionService:GetTagged("VaultObject")
 
 
 local elapsed: number = 0
@@ -26,13 +26,13 @@ local elapsed: number = 0
 local ThiefVault = {}
 ThiefVault.transitions = {
     Walk = function(flags: PlayerFlags): boolean
-        return flags.i_move and not flags.i_run and not flags.a_vault
+        return flags.i_move and not flags.i_run and not flags.a_thief
     end,
     Run = function(flags: PlayerFlags): boolean
-        return flags.i_move and flags.i_run and not flags.a_vault
+        return flags.i_move and flags.i_run and not flags.a_thief
     end,
     Idle = function(flags: PlayerFlags): boolean
-        return not flags.i_move and not flags.a_vault
+        return not flags.i_move and not flags.a_thief
     end
 }
 
@@ -63,7 +63,7 @@ function ThiefVault.update(deltaTime: number, flags: PlayerFlags): boolean
     elapsed += deltaTime
 
     if elapsed >= DURATION then
-        flags.a_vault = false
+        flags.a_thief = false
 
         return true
     end
