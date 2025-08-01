@@ -23,11 +23,11 @@ type PlayerFlags = Types.PlayerFlags
 type InputType = Types.InputType
 
 
-local THIEF_LOOK_THRESHOLD: number = math.cos(math.rad(10))
-local KONG_LOOK_THRESHOLD: number = math.cos(math.rad(5))
+local THIEF_LOOK_THRESHOLD: number = math.cos(math.rad(20))
+local KONG_LOOK_THRESHOLD: number = math.cos(math.rad(30))
 local THIEF_TRIGGER_DISTANCE: number = 1
 local KONG_TRIGGER_DISTANCE: number = 12
-local KONG_MINIMUM_DISTANCE: number = 4
+local KONG_MINIMUM_DISTANCE: number = 3
 
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
@@ -192,6 +192,8 @@ function Player.initialise(): ()
 
                 if math.abs(product) >= KONG_LOOK_THRESHOLD then
                     flags.a_kong = true
+                else
+                    flags.a_slide = true
                 end
             else
                 flags.a_slide = true

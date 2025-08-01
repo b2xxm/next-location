@@ -1,10 +1,8 @@
 # next location
-- game inspired by hotline miami
-- stratagem system from helldivers 2 (added it since i saw gameplay of it, looked cool)
+game inspired by hotline miami
 
-features:
-- isometric camera
-- guns and weapons
-- npcs, and single-player pve
-- probably a storyline, for last
-- levels?
+- single-player pve
+- probably a storyline
+- levels
+
+(everything will be client sided)

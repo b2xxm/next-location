@@ -5,7 +5,7 @@ local shared = ReplicatedStorage.Shared
 local client = shared.Client
 
 
---local Animation = require(client.Player.Animation)
+local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)
 local Types = require(shared.Types)
 
@@ -13,7 +13,8 @@ local Types = require(shared.Types)
 type PlayerFlags = Types.PlayerFlags
 
 
-local DURATION: number = 1
+local DURATION: number = 0.4
+local WALK_SPEED: number = 3
 
 
 local elapsed: number = 0
@@ -36,13 +37,13 @@ Land.transitions = {
 function Land.enter(): ()
     elapsed = 0
 
-    Character.setWalkspeed(0)
-    --Animation.play("Land")
+    Character.setWalkspeed(WALK_SPEED)
+    Animation.play("Land")
 end
 
 
 function Land.exit(): ()
-    --Animation.stop("Land")
+    Animation.stop("Land")
 end
 
 
