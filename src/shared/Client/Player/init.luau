@@ -10,7 +10,7 @@ local shared = ReplicatedStorage.Shared
 local client = shared.Client
 
 
-local StateMachine = require(shared.StateMachine)
+local StateMachine = require(client.StateMachine)
 local Input = require(client.Input)
 local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)

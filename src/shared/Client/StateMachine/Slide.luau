@@ -11,6 +11,7 @@ local Types = require(shared.Types)
 
 
 type PlayerFlags = Types.PlayerFlags
+type StateDefinition = Types.StateDefinition
 
 
 local DURATION: number = 1
@@ -64,4 +65,4 @@ function Slide.update(deltaTime: number, flags: PlayerFlags): boolean
 end
 
 
-return Slide
+return Slide :: StateDefinition

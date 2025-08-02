@@ -11,41 +11,39 @@ local Types = require(shared.Types)
 
 
 type PlayerFlags = Types.PlayerFlags
+type StateDefinition = Types.StateDefinition
 
 
 local WALK_SPEED: number = 8
 
 
-local Walk = {}
-Walk.update = nil
-Walk.transitions = {
-    Idle = function(flags: PlayerFlags): boolean
-        return not flags.i_move
+local Idle = {}
+Idle.update = nil
+Idle.transitions = {
+    Walk = function(flags: PlayerFlags): boolean
+        return flags.i_move and not flags.i_run
     end,
     Run = function(flags: PlayerFlags): boolean
-        return flags.i_run
+        return flags.i_move and flags.i_run
     end,
-    Sneak = function(flags: PlayerFlags): boolean
+    Crouch = function(flags: PlayerFlags): boolean
         return flags.i_crouch and not flags.a_thief
     end,
     Thief = function(flags: PlayerFlags): boolean
         return flags.a_thief
-    end,
-    Fall = function(flags: PlayerFlags): boolean
-        return flags.a_fall
     end
 }
 
 
-function Walk.enter(): ()
-    Animation.play("Walk")
+function Idle.enter(): ()
+    Animation.play("Idle")
     Character.setWalkspeed(WALK_SPEED)
 end
 
 
-function Walk.exit(): ()
-    Animation.stop("Walk")
+function Idle.exit(): ()
+    Animation.stop("Idle")
 end
 
 
-return Walk
+return Idle :: StateDefinition

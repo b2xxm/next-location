@@ -11,6 +11,7 @@ local Types = require(shared.Types)
 
 
 type PlayerFlags = Types.PlayerFlags
+type StateDefinition = Types.StateDefinition
 
 
 local RUN_SPEED: number = 22
@@ -48,4 +49,4 @@ function Run.exit(): ()
 end
 
 
-return Run
+return Run :: StateDefinition

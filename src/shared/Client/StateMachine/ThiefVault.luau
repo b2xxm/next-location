@@ -12,6 +12,7 @@ local Types = require(shared.Types)
 
 
 type PlayerFlags = Types.PlayerFlags
+type StateDefinition = Types.StateDefinition
 
 
 local DURATION: number = 0.7
@@ -72,4 +73,4 @@ function ThiefVault.update(deltaTime: number, flags: PlayerFlags): boolean
 end
 
 
-return ThiefVault
+return ThiefVault :: StateDefinition

@@ -8,7 +8,7 @@ local client = shared.Client
 
 
 local TweenUtils = require(client.TweenUtils)
-local Region = require(shared.Region)
+local Region = require(client.Region)
 
 
 local SEPERATOR: string = "_"

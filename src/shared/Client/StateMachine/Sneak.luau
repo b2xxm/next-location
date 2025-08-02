@@ -11,6 +11,7 @@ local Types = require(shared.Types)
 
 
 type PlayerFlags = Types.PlayerFlags
+type StateDefinition = Types.StateDefinition
 
 
 local SNEAK_SPEED: number = 4
@@ -45,4 +46,4 @@ function Sneak.exit(): ()
 end
 
 
-return Sneak
+return Sneak :: StateDefinition

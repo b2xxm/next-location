@@ -13,6 +13,7 @@ local Types = require(shared.Types)
 
 
 type PlayerFlags = Types.PlayerFlags
+type StateDefinition = Types.StateDefinition
 
 
 local DURATION: number = 0.4
@@ -106,4 +107,4 @@ function KongVault.update(deltaTime: number, flags: PlayerFlags): boolean
 end
 
 
-return KongVault
+return KongVault :: StateDefinition

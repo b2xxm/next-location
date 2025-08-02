@@ -10,6 +10,7 @@ local Types = require(shared.Types)
 
 
 type PlayerFlags = Types.PlayerFlags
+type StateDefinition = Types.StateDefinition
 
 
 local Crouch = {}
@@ -34,4 +35,4 @@ function Crouch.exit(): ()
 end
 
 
-return Crouch
+return Crouch :: StateDefinition
