@@ -1,4 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 
 
 local shared = ReplicatedStorage.Shared
@@ -16,6 +18,13 @@ type StateDefinition = Types.StateDefinition
 
 local DURATION: number = 1
 local SLIDE_SPEED: number = 22
+local RAY_LENGTH: number = 2
+
+local raycastParams: RaycastParams = RaycastParams.new()
+raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+
+local player: Player = Players.LocalPlayer
+local waistOffset = -Vector3.yAxis
 
 
 local elapsed: number = 0
@@ -40,6 +49,7 @@ Slide.transitions = {
 
 function Slide.enter(): ()
     elapsed = 0
+    raycastParams.FilterDescendantsInstances = { player.Character :: Model }
 
     Character.toggleForwardVelocity(true, SLIDE_SPEED)
     Animation.play("Slide")
@@ -56,6 +66,16 @@ function Slide.update(deltaTime: number, flags: PlayerFlags): boolean
     elapsed += deltaTime
 
     if elapsed >= DURATION then
+        flags.a_slide = false
+
+        return true
+    end
+
+    local position = Character.getPosition()
+    local direction = Character.getLookDirection()
+    local result = Workspace:Raycast(position + waistOffset, direction * RAY_LENGTH, raycastParams)
+
+    if result then
         flags.a_slide = false
 
         return true
