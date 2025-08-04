@@ -7,13 +7,16 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 
+local shared = ReplicatedStorage.Shared
 local prefabs = ReplicatedStorage.Prefabs
 
 
-local FOOT_OFFSET: number = 3
+local Config = require(shared.Config)
+
 
 local player: Player = Players.LocalPlayer
 local camera: Camera = Workspace.CurrentCamera
+local footOffset: Vector3 = Config.offset.foot
 
 local raycastParams: RaycastParams = RaycastParams.new()
 raycastParams.RespectCanCollide = false
@@ -43,7 +46,7 @@ local function characterAdded(newCharacter: Model): ()
     local weld = plane:FindFirstChildOfClass("WeldConstraint") :: WeldConstraint
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
 
-    plane.Position = humanoidRootPart.Position - Vector3.yAxis * FOOT_OFFSET
+    plane.Position = humanoidRootPart.Position + footOffset
     weld.Part1 = humanoidRootPart
     weld.Enabled = true
 end

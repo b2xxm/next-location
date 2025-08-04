@@ -9,11 +9,12 @@ local client = shared.Client
 
 local TweenUtils = require(client.TweenUtils)
 local Region = require(client.Region)
+local Config = require(shared.Config)
 
 
 local SEPERATOR: string = "_"
-local TRANSPARENCY: number = 0.8
-local SHADOW_TRANSPARENCY: number = 0.3
+local TRANSPARENCY: number = Config.invisicam.wallTransparency
+local SHADOW_TRANSPARENCY: number = Config.invisicam.shadowTransparency
 
 local tweenInfo: TweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 

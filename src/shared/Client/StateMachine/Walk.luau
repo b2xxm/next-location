@@ -7,6 +7,7 @@ local client = shared.Client
 
 local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)
+local Config = require(shared.Config)
 local Types = require(shared.Types)
 
 
@@ -14,7 +15,7 @@ type PlayerFlags = Types.PlayerFlags
 type StateDefinition = Types.StateDefinition
 
 
-local WALK_SPEED: number = 8
+local WALK_SPEED: number = Config.locomotion.speed.walk
 
 
 local Walk = {}

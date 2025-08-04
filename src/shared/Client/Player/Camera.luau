@@ -6,21 +6,24 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 
+local shared = ReplicatedStorage.Shared
 local prefabs = ReplicatedStorage.Prefabs
+
+
+local Config = require(shared.Config)
 
 
 local player: Player = Players.LocalPlayer
 
-local SMOOTHING_FACTOR: number = 0.05
-local UPDATE_NAME: string = "CameraUpdate"
-local UPDATE_PRIORITY: number = Enum.RenderPriority.Camera.Value
-local TARGET_FRAME_RATE: number = 60
+local SMOOTHING_FACTOR: number = Config.camera.smoothFactor
+local TARGET_FRAME_RATE: number = Config.camera.targetFrameRate
+
+local camera: Camera = Workspace.CurrentCamera
+local offset: Vector3 = Config.camera.offset
 
 
 local character: Model = nil
 local focusPart: Part = nil
-local camera: Camera = Workspace.CurrentCamera
-local offset: Vector3 = Vector3.new(-7, 15, -7)
 
 
 local Camera = {}
@@ -37,7 +40,7 @@ function Camera.initialise(): ()
 	Camera.refresh(character)
 
 	player.CharacterAdded:Connect(Camera.refresh)
-	RunService:BindToRenderStep(UPDATE_NAME, UPDATE_PRIORITY, Camera.update)
+	RunService:BindToRenderStep("CameraUpdate", Enum.RenderPriority.Camera.Value, Camera.update)
 end
 
 

@@ -9,6 +9,7 @@ local client = shared.Client
 
 local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)
+local Config = require(shared.Config)
 local Types = require(shared.Types)
 
 
@@ -16,15 +17,15 @@ type PlayerFlags = Types.PlayerFlags
 type StateDefinition = Types.StateDefinition
 
 
-local DURATION: number = 1
-local SLIDE_SPEED: number = 22
-local RAY_LENGTH: number = 2
+local DURATION: number = Config.locomotion.duration.slide
+local SLIDE_SPEED: number = Config.locomotion.speed.slide
+local RAY_LENGTH: number = Config.locomotion.slideBreakRayLength
+
+local player: Player = Players.LocalPlayer
+local waistOffset = Config.offset.waist
 
 local raycastParams: RaycastParams = RaycastParams.new()
 raycastParams.FilterType = Enum.RaycastFilterType.Exclude
-
-local player: Player = Players.LocalPlayer
-local waistOffset = -Vector3.yAxis
 
 
 local elapsed: number = 0

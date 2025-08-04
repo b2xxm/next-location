@@ -16,6 +16,7 @@ local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)
 local Camera = require(client.Player.Camera)
 local MouseAim = require(client.Player.MouseAim)
+local Config = require(shared.Config)
 local Types = require(shared.Types)
 
 
@@ -23,17 +24,17 @@ type PlayerFlags = Types.PlayerFlags
 type InputType = Types.InputType
 
 
-local THIEF_LOOK_THRESHOLD: number = math.cos(math.rad(20))
-local KONG_LOOK_THRESHOLD: number = math.cos(math.rad(30))
-local THIEF_TRIGGER_DISTANCE: number = 1
-local KONG_TRIGGER_DISTANCE: number = 12
-local KONG_MINIMUM_DISTANCE: number = 3
+local THIEF_LOOK_THRESHOLD: number = Config.locomotion.vault.thiefLookThreshold
+local KONG_LOOK_THRESHOLD: number = Config.locomotion.vault.kongLookThreshold
+local THIEF_TRIGGER_DISTANCE: number = Config.locomotion.vault.thiefTriggerDistance
+local KONG_TRIGGER_DISTANCE: number = Config.locomotion.vault.kongTriggerDistance
+local KONG_MINIMUM_DISTANCE: number = Config.locomotion.vault.kongStartDistance
 
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
 
 local runKey: InputType = Enum.KeyCode.LeftShift
-local crouchKey: InputType = Enum.KeyCode.Space
+local moveActionKey: InputType = Enum.KeyCode.Space
 local moveKeys: { InputType } = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
 
 local counterMoveKeys: { [InputType]: InputType } = {
@@ -164,7 +165,7 @@ function Player.initialise(): ()
         updateState()
     end
 
-    local function crouch(input: InputObject): ()
+    local function moveAction(input: InputObject): ()
         flags.i_crouch = input.UserInputState == Enum.UserInputState.Begin
 
         local lookDirection = Character.getLookDirection()
@@ -215,7 +216,7 @@ function Player.initialise(): ()
 
     Input.register("Movement", move, table.unpack(moveKeys))
     Input.register("RunKeyDown", run, runKey)
-    Input.register("CrouchKeyDown", crouch, crouchKey)
+    Input.register("MoveActionKeyDown", moveAction, moveActionKey)
     
     characterAdded(player.Character :: Model)
 

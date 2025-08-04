@@ -6,15 +6,11 @@ local client = shared.Client
 
 
 local Animation = require(client.Player.Animation)
-local Character = require(client.Player.Character)
 local Types = require(shared.Types)
 
 
 type PlayerFlags = Types.PlayerFlags
 type StateDefinition = Types.StateDefinition
-
-
-local WALK_SPEED: number = 8
 
 
 local Idle = {}
@@ -37,7 +33,6 @@ Idle.transitions = {
 
 function Idle.enter(): ()
     Animation.play("Idle")
-    Character.setWalkspeed(WALK_SPEED)
 end
 
 

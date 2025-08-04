@@ -9,6 +9,7 @@ local client = shared.Client
 
 local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)
+local Config = require(shared.Config)
 local Types = require(shared.Types)
 
 
@@ -16,13 +17,11 @@ type PlayerFlags = Types.PlayerFlags
 type StateDefinition = Types.StateDefinition
 
 
-local DURATION: number = 0.4
-local VAULT_SPEED: number = 22
-local START_VAULT_DISTANCE: number = 3.5
-local RAY_LENGTH: number = 10
+local DURATION: number = Config.locomotion.duration.kong
+local VAULT_SPEED: number = Config.locomotion.speed.kong
+local START_VAULT_DISTANCE: number = Config.locomotion.vault.kongStartDistance
 
-local waistOffset: Vector3 = -Vector3.yAxis
-
+local waistOffset: Vector3 = Config.offset.waist
 local vaultObjects: { Instance } = CollectionService:GetTagged("VaultObject")
 
 local raycastParams: RaycastParams = RaycastParams.new()
@@ -86,15 +85,9 @@ function KongVault.update(deltaTime: number, flags: PlayerFlags): boolean
 
     local position = Character.getPosition()
     local direction = Character.getLookDirection()
-    local result = Workspace:Raycast(position + waistOffset, direction * RAY_LENGTH, raycastParams)
+    local result = Workspace:Raycast(position + waistOffset, direction * START_VAULT_DISTANCE, raycastParams)
 
     if not result then
-        return false
-    end
-
-    local hitPosition = result.Position
-
-    if (position - hitPosition).Magnitude > START_VAULT_DISTANCE then
         return false
     end
     
