@@ -24,11 +24,12 @@ type PlayerFlags = Types.PlayerFlags
 type InputType = Types.InputType
 
 
-local THIEF_LOOK_THRESHOLD: number = Config.locomotion.vault.thiefLookThreshold
-local KONG_LOOK_THRESHOLD: number = Config.locomotion.vault.kongLookThreshold
-local THIEF_TRIGGER_DISTANCE: number = Config.locomotion.vault.thiefTriggerDistance
-local KONG_TRIGGER_DISTANCE: number = Config.locomotion.vault.kongTriggerDistance
-local KONG_MINIMUM_DISTANCE: number = Config.locomotion.vault.kongStartDistance
+local THIEF_LOOK_THRESHOLD: number = Config.locomotion.lookThreshold.thief
+local KONG_LOOK_THRESHOLD: number = Config.locomotion.lookThreshold.kong
+local SCALE_LOOK_THRESHOLD: number = Config.locomotion.lookThreshold.scale
+local THIEF_TRIGGER_DISTANCE: number = Config.locomotion.triggerDistance.thief
+local KONG_TRIGGER_DISTANCE: number = Config.locomotion.triggerDistance.kong
+local KONG_MINIMUM_DISTANCE: number = Config.locomotion.triggerDistance.kongStart
 
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
@@ -234,7 +235,7 @@ function Player.toggleMovement(enabled: boolean): ()
     flags.i_crouch = false
 
     Input.toggle("Movement", enabled)
-    Input.toggle("CrouchKeyDown", enabled)
+    Input.toggle("MoveActionKeyDown", enabled)
 
     updateState()
     Character.setWalkspeed(0)

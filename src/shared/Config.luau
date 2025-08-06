@@ -29,12 +29,16 @@ return {
             kong = 0.4
         },
 
-        vault = {
-            thiefLookThreshold = math.cos(math.rad(20)),
-            kongLookThreshold = math.cos(math.rad(30)),
-            thiefTriggerDistance = 1,
-            kongTriggerDistance = 12,
-            kongStartDistance = 3.5
+        triggerDistance = {
+            thief = 1,
+            kong = 12,
+            kongStart = 3.5,
+            scale = 12
+        },
+
+        lookThreshold = {
+            thief = math.cos(math.rad(20)),
+            kong = math.cos(math.rad(30)),
         },
 
         slideBreakRayLength = 2
@@ -42,6 +46,6 @@ return {
 
     invisicam = {
         wallTransparency = 0.8,
-        shadowTransparency = 0.8
+        shadowTransparency = 0.3
     }
 }

@@ -5,7 +5,7 @@ local shared = ReplicatedStorage.Shared
 local client = shared.Client
 
 
---local Animation = require(client.Player.Animation)
+local Animation = require(client.Player.Animation)
 local Character = require(client.Player.Character)
 local Config = require(shared.Config)
 local Types = require(shared.Types)
@@ -29,12 +29,12 @@ Fall.transitions = {
 
 function Fall.enter(): ()
     Character.setWalkspeed(WALK_SPEED)
-    --Animation.play("Fall")
+    Animation.play("Fall")
 end
 
 
 function Fall.exit(): ()
-    --Animation.stop("Fall")
+    Animation.stop("Fall")
 end
 
 

@@ -19,7 +19,7 @@ type StateDefinition = Types.StateDefinition
 
 local DURATION: number = Config.locomotion.duration.kong
 local VAULT_SPEED: number = Config.locomotion.speed.kong
-local START_VAULT_DISTANCE: number = Config.locomotion.vault.kongStartDistance
+local START_VAULT_DISTANCE: number = Config.locomotion.triggerDistance.kongStart
 
 local waistOffset: Vector3 = Config.offset.waist
 local vaultObjects: { Instance } = CollectionService:GetTagged("VaultObject")
