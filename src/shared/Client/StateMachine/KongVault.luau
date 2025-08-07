@@ -20,6 +20,7 @@ type StateDefinition = Types.StateDefinition
 local DURATION: number = Config.locomotion.duration.kong
 local VAULT_SPEED: number = Config.locomotion.speed.kong
 local START_VAULT_DISTANCE: number = Config.locomotion.triggerDistance.kongStart
+local RUN_SPEED: number = Config.locomotion.speed.run
 
 local waistOffset: Vector3 = Config.offset.waist
 local vaultObjects: { Instance } = CollectionService:GetTagged("VaultObject")
@@ -55,13 +56,15 @@ function KongVault.enter(): ()
         part.CanCollide = false
     end
 
-    Character.toggleForwardVelocity(true, VAULT_SPEED)
+    local direction = Character.getLookDirection()
+
+    Character.toggleVelocity(true, direction, RUN_SPEED)
     Animation.play("Run")
 end
 
 
 function KongVault.exit(): ()
-    Character.toggleForwardVelocity(false)
+    Character.toggleVelocity(false)
     Animation.stop("Kong")
 
     for _, part in vaultObjects do
@@ -95,6 +98,8 @@ function KongVault.update(deltaTime: number, flags: PlayerFlags): boolean
 
     Animation.stop("Run")
     Animation.play("Kong")
+
+    Character.toggleVelocity(true, direction, VAULT_SPEED)
 
     return false
 end

@@ -23,7 +23,9 @@ local states:{ [string]: StateDefinition } = {
     Thief = require(script.ThiefVault),
     Kong = require(script.KongVault),
     Fall = require(script.Fall),
-    Land = require(script.Land)
+    Land = require(script.Land),
+    Scale = require(script.WallScale),
+    Hang = require(script.LedgeHang)
 }
 
 

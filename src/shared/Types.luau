@@ -8,14 +8,9 @@ export type StateDefinition = {
 }
 
 export type PlayerFlags = {
-    i_move: boolean,
-    i_run: boolean,
-    i_crouch: boolean,
-    a_slide: boolean,
-    a_thief: boolean,
-    a_kong: boolean,
-    a_fall: boolean,
-    a_land: boolean
+    i_move: boolean, i_run: boolean, i_moveAction: boolean,
+    a_slide: boolean, a_thief: boolean, a_kong: boolean,
+    a_fall: boolean, a_land: boolean, a_scale: boolean
 }
 
 --[[ prefix

@@ -17,7 +17,7 @@ local Crouch = {}
 Crouch.update = nil
 Crouch.transitions = {
     Idle = function(flags: PlayerFlags): boolean
-        return not flags.i_crouch
+        return not flags.i_moveAction
     end,
     Sneak = function(flags: PlayerFlags): boolean
         return flags.i_move

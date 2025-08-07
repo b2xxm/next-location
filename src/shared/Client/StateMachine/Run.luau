@@ -35,7 +35,10 @@ Run.transitions = {
     end,
     Kong = function(flags: PlayerFlags): boolean
         return flags.a_kong
-    end
+    end,
+    Scale = function(flags: PlayerFlags): boolean
+        return flags.a_scale
+    end,
 }
 
 

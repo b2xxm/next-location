@@ -30,6 +30,7 @@ local SCALE_LOOK_THRESHOLD: number = Config.locomotion.lookThreshold.scale
 local THIEF_TRIGGER_DISTANCE: number = Config.locomotion.triggerDistance.thief
 local KONG_TRIGGER_DISTANCE: number = Config.locomotion.triggerDistance.kong
 local KONG_MINIMUM_DISTANCE: number = Config.locomotion.triggerDistance.kongStart
+local SCALE_TRIGGER_DISTANCE: number = Config.locomotion.triggerDistance.scale
 
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
@@ -50,6 +51,10 @@ local waistOffset = -Vector3.yAxis
 local vaultRayParams = RaycastParams.new()
 vaultRayParams.FilterDescendantsInstances = CollectionService:GetTagged("VaultObject")
 vaultRayParams.FilterType = Enum.RaycastFilterType.Include
+
+local scaleRayParams = RaycastParams.new()
+scaleRayParams.FilterDescendantsInstances = CollectionService:GetTagged("ScaleObject")
+scaleRayParams.FilterType = Enum.RaycastFilterType.Include
 
 
 local flags: { [string]: boolean } = {}
@@ -126,14 +131,62 @@ local function characterAdded(character: Model): ()
 end
 
 
-local function findVaultObject(position: Vector3, direction: Vector3, distance: number): BasePart?
-    local result = Workspace:Raycast(position + waistOffset, direction * distance, vaultRayParams)
+local function findObjectByRay(position: Vector3, direction: Vector3, distance: number, params: RaycastParams): BasePart?
+    local result = Workspace:Raycast(position + waistOffset, direction * distance, params)
 
     if result then
         return result.Instance
     end
     
     return nil
+end
+
+
+local function isLookingTowards(direction: Vector3, instance: BasePart?, threshold: number): boolean
+    if instance == nil then
+        return false
+    end
+
+    local expectedDirection = instance.CFrame.LookVector
+    local product = direction:Dot(expectedDirection)
+
+    return math.abs(product) >= threshold
+end
+
+
+local function moveAction(input: InputObject): ()
+    flags.i_moveAction = input.UserInputState == Enum.UserInputState.Begin
+
+    if flags.a_slide then
+        return
+    end
+
+    local direction = Character.getLookDirection()
+    local position = Character.getPosition()
+
+    if flags.i_moveAction and not (flags.i_move and flags.i_run) then
+        local vaultObject = findObjectByRay(position, direction, THIEF_TRIGGER_DISTANCE, vaultRayParams)
+
+        if isLookingTowards(direction, vaultObject, THIEF_LOOK_THRESHOLD) then
+            flags.a_thief = true
+        end
+
+    elseif flags.i_moveAction and flags.i_move and flags.i_run then
+        local scaleObject = findObjectByRay(position, direction, SCALE_TRIGGER_DISTANCE, scaleRayParams)
+        local vaultObject = findObjectByRay(position, direction, KONG_TRIGGER_DISTANCE, vaultRayParams)
+        local lowerThresholdCheck = findObjectByRay(position, direction, KONG_MINIMUM_DISTANCE, vaultRayParams)
+
+        if lowerThresholdCheck == nil and isLookingTowards(direction, vaultObject, KONG_LOOK_THRESHOLD) then
+            flags.a_kong = true
+
+        elseif isLookingTowards(direction, scaleObject, SCALE_LOOK_THRESHOLD) then
+            flags.a_scale = true
+        else
+            flags.a_slide = true
+        end
+    end
+
+    updateState()
 end
 
 
@@ -166,45 +219,6 @@ function Player.initialise(): ()
         updateState()
     end
 
-    local function moveAction(input: InputObject): ()
-        flags.i_crouch = input.UserInputState == Enum.UserInputState.Begin
-
-        local lookDirection = Character.getLookDirection()
-        local position = Character.getPosition()
-
-        if flags.i_crouch and not (flags.i_move and flags.i_run) and not flags.a_slide then
-            local vaultObject = findVaultObject(position, lookDirection, THIEF_TRIGGER_DISTANCE)
-
-            if vaultObject then
-                local expectedDirection = vaultObject.CFrame.LookVector
-                local product = lookDirection:Dot(expectedDirection)
-
-                if math.abs(product) >= THIEF_LOOK_THRESHOLD then
-                    flags.a_thief = true
-                end
-            end
-
-        elseif flags.i_crouch and flags.i_move and flags.i_run then
-            local vaultObject = findVaultObject(position, lookDirection, KONG_TRIGGER_DISTANCE)
-            local lowerThresholdCheck = findVaultObject(position, lookDirection, KONG_MINIMUM_DISTANCE)
-
-            if vaultObject and lowerThresholdCheck == nil and not flags.a_slide then
-                local expectedDirection = vaultObject.CFrame.LookVector
-                local product = lookDirection:Dot(expectedDirection)
-
-                if math.abs(product) >= KONG_LOOK_THRESHOLD then
-                    flags.a_kong = true
-                else
-                    flags.a_slide = true
-                end
-            else
-                flags.a_slide = true
-            end
-        end
-
-        updateState()
-    end
-
     for _, key in moveKeys do
         moveKeysDown[key] = false
     end
@@ -232,7 +246,7 @@ end
 
 function Player.toggleMovement(enabled: boolean): ()
     flags.i_move = false
-    flags.i_crouch = false
+    flags.i_moveAction = false
 
     Input.toggle("Movement", enabled)
     Input.toggle("MoveActionKeyDown", enabled)
@@ -246,10 +260,9 @@ local DebugMenu = Player.getInterface("Debug")
 local prefab = DebugMenu:FindFirstChild("Prefab", true) :: Frame
 
 local internal: PlayerFlags = {
-    i_move = false, i_run = false, i_crouch = false,
-
+    i_move = false, i_run = false, i_moveAction = false,
     a_slide = false, a_thief = false, a_kong = false,
-    a_fall = false, a_land = false
+    a_fall = false, a_land = false, a_scale = false
 }
 
 local stateValues = {}

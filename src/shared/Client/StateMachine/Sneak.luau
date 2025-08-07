@@ -22,10 +22,10 @@ local Sneak = {}
 Sneak.update = nil
 Sneak.transitions = {
     Walk = function(flags: PlayerFlags): boolean
-        return not flags.i_crouch and not flags.i_run
+        return not flags.i_moveAction and not flags.i_run
     end,
     Run = function(flags: PlayerFlags): boolean
-        return not flags.i_crouch and flags.i_run
+        return not flags.i_moveAction and flags.i_run
     end,
     Crouch = function(flags: PlayerFlags): boolean
         return not flags.i_move

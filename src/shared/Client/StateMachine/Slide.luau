@@ -52,13 +52,15 @@ function Slide.enter(): ()
     elapsed = 0
     raycastParams.FilterDescendantsInstances = { player.Character :: Model }
 
-    Character.toggleForwardVelocity(true, SLIDE_SPEED)
+    local direction = Character.getLookDirection()
+
+    Character.toggleVelocity(true, direction, SLIDE_SPEED)
     Animation.play("Slide")
 end
 
 
 function Slide.exit(): ()
-    Character.toggleForwardVelocity(false)
+    Character.toggleVelocity(false)
     Animation.stop("Slide")
 end
 

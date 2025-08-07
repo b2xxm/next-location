@@ -47,15 +47,16 @@ function Character.setWalkspeed(speed: number): ()
 end
 
 
-function Character.toggleForwardVelocity(enabled: boolean, givenSpeed: number?): ()
+function Character.toggleVelocity(enabled: boolean, givenDirection: Vector3?, givenSpeed: number?): ()
     local character = player.Character :: Model
     local humanoid = character:WaitForChild("Humanoid") :: Humanoid
     local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
 
     local velocity = rootPart:WaitForChild("LinearVelocity") :: LinearVelocity
     local speed = givenSpeed or 0
+    local direction = givenDirection or Vector3.zero
 
-    velocity.VectorVelocity = rootPart.CFrame.LookVector * speed
+    velocity.VectorVelocity = direction * speed
     velocity.Enabled = enabled
     humanoid.AutoRotate = not enabled
 end
@@ -76,30 +77,6 @@ function Character.getPosition(): Vector3
 
     return rootPart.Position
 end
-
-
--- function Character.isTouching(part: BasePart): boolean
---     local parts = Workspace:GetPartsInPart(part, overlapParams)
-
---     return #parts ~= 0
--- end
-
-
--- function Character.moveTo(position: Vector3, duration: number): ()
---     local character = player.Character :: Model
---     local rootPart = character:WaitForChild("HumanoidRootPart") :: BasePart
-
---     local info = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
---     local goal = { CFrame = CFrame.new(position) * rootPart.CFrame.Rotation }
-
---     rootPart.Anchored = true
-
---     local tween = TweenUtils.create(rootPart, info, goal)
---     tween:Play()
---     tween.Completed:Wait()
-
---     rootPart.Anchored = false
--- end
 
 
 return Character

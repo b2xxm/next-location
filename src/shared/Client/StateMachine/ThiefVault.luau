@@ -46,13 +46,15 @@ function ThiefVault.enter(): ()
         part.CanCollide = false
     end
 
-    Character.toggleForwardVelocity(true, VAULT_SPEED)
+    local direction = Character.getLookDirection()
+
+    Character.toggleVelocity(true, direction, VAULT_SPEED)
     Animation.play("Thief")
 end
 
 
 function ThiefVault.exit(): ()
-    Character.toggleForwardVelocity(false)
+    Character.toggleVelocity(false)
     Animation.stop("Thief")
 
     for _, part in vaultObjects do
