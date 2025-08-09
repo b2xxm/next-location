@@ -157,7 +157,9 @@ end
 local function moveAction(input: InputObject): ()
     flags.i_moveAction = input.UserInputState == Enum.UserInputState.Begin
 
-    if flags.a_slide then
+    if flags.a_slide or flags.a_fall then
+        updateState()
+
         return
     end
 
@@ -172,17 +174,24 @@ local function moveAction(input: InputObject): ()
         end
 
     elseif flags.i_moveAction and flags.i_move and flags.i_run then
-        local scaleObject = findObjectByRay(position, direction, SCALE_TRIGGER_DISTANCE, scaleRayParams)
         local vaultObject = findObjectByRay(position, direction, KONG_TRIGGER_DISTANCE, vaultRayParams)
-        local lowerThresholdCheck = findObjectByRay(position, direction, KONG_MINIMUM_DISTANCE, vaultRayParams)
 
-        if lowerThresholdCheck == nil and isLookingTowards(direction, vaultObject, KONG_LOOK_THRESHOLD) then
-            flags.a_kong = true
+        if vaultObject and isLookingTowards(direction, vaultObject, KONG_LOOK_THRESHOLD) then
+            local lowerThresholdCheck = findObjectByRay(position, direction, KONG_MINIMUM_DISTANCE, vaultRayParams)
 
-        elseif isLookingTowards(direction, scaleObject, SCALE_LOOK_THRESHOLD) then
-            flags.a_scale = true
+            if lowerThresholdCheck == nil then
+                flags.a_kong = true
+            else
+                flags.a_slide = true
+            end
         else
-            flags.a_slide = true
+            local scaleObject = findObjectByRay(position, direction, SCALE_TRIGGER_DISTANCE, scaleRayParams)
+            
+            if scaleObject and isLookingTowards(direction, scaleObject, SCALE_LOOK_THRESHOLD) then
+                flags.a_scale = true
+            else
+                flags.a_slide = true
+            end
         end
     end
 

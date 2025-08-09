@@ -16,7 +16,9 @@ type StateDefinition = Types.StateDefinition
 
 local Hang = {}
 Hang.transitions = {
-    
+    Fall = function(flags: PlayerFlags): boolean
+        return flags.i_run and flags.i_moveAction
+    end
 }
 
 
