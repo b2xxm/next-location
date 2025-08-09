@@ -31,6 +31,7 @@ local THIEF_TRIGGER_DISTANCE: number = Config.locomotion.triggerDistance.thief
 local KONG_TRIGGER_DISTANCE: number = Config.locomotion.triggerDistance.kong
 local KONG_MINIMUM_DISTANCE: number = Config.locomotion.triggerDistance.kongStart
 local SCALE_TRIGGER_DISTANCE: number = Config.locomotion.triggerDistance.scale
+local SCALE_MINIMUM_DISTANCE: number = Config.locomotion.triggerDistance.scaleStart
 
 local player: Player = Players.LocalPlayer
 local playerGui: PlayerGui = player.PlayerGui
@@ -181,17 +182,23 @@ local function moveAction(input: InputObject): ()
 
             if lowerThresholdCheck == nil then
                 flags.a_kong = true
-            else
-                flags.a_slide = true
+            end
+
+            updateState()
+
+            return
+        end
+        
+        local scaleObject = findObjectByRay(position, direction, SCALE_TRIGGER_DISTANCE, scaleRayParams)
+        
+        if scaleObject and isLookingTowards(direction, scaleObject, SCALE_LOOK_THRESHOLD) then
+            local lowerThresholdCheck = findObjectByRay(position, direction, SCALE_MINIMUM_DISTANCE, scaleRayParams)
+
+            if lowerThresholdCheck == nil then
+                flags.a_scale = true
             end
         else
-            local scaleObject = findObjectByRay(position, direction, SCALE_TRIGGER_DISTANCE, scaleRayParams)
-            
-            if scaleObject and isLookingTowards(direction, scaleObject, SCALE_LOOK_THRESHOLD) then
-                flags.a_scale = true
-            else
-                flags.a_slide = true
-            end
+            flags.a_slide = true
         end
     end
 
