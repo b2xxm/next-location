@@ -8,7 +8,8 @@ return {
     offset = {
         foot = -Vector3.yAxis * 3,
         waist = -Vector3.yAxis,
-        height = 5
+        height = 5,
+        climbFinish = Vector3.new(2.7, 5)
     },
 
     locomotion = {
@@ -28,7 +29,8 @@ return {
             slide = 1,
             thief = 0.7,
             kong = 0.4,
-            scale = 0.6
+            scale = 0.6,
+            climb = 1
         },
 
         triggerDistance = {

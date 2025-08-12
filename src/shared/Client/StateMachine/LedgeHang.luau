@@ -15,7 +15,11 @@ type StateDefinition = Types.StateDefinition
 
 
 local Hang = {}
+Hang.update = nil
 Hang.transitions = {
+    Climb = function(flags: PlayerFlags): boolean
+        return not flags.i_run and flags.i_moveAction
+    end,
     Fall = function(flags: PlayerFlags): boolean
         return flags.i_run and flags.i_moveAction
     end
@@ -30,7 +34,6 @@ end
 
 function Hang.exit(): ()
     Animation.stop("Hang")
-    Character.toggleVelocity(false)
 end
 
 

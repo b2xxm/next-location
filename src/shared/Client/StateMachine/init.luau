@@ -25,7 +25,8 @@ local states:{ [string]: StateDefinition } = {
     Fall = require(script.Fall),
     Land = require(script.Land),
     Scale = require(script.WallScale),
-    Hang = require(script.LedgeHang)
+    Hang = require(script.LedgeHang),
+    Climb = require(script.LedgeClimb)
 }
 
 

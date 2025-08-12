@@ -79,4 +79,9 @@ function Character.getPosition(): Vector3
 end
 
 
+function Character.get(): Model
+    return player.Character :: Model
+end
+
+
 return Character

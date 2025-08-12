@@ -29,6 +29,8 @@ Fall.transitions = {
 
 function Fall.enter(): ()
     Character.setWalkspeed(WALK_SPEED)
+    Character.toggleVelocity(false)
+    
     Animation.play("Fall")
 end
 
