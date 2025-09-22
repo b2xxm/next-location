@@ -79,9 +79,13 @@ function Slide.update(deltaTime: number, flags: PlayerFlags): boolean
     local result = Workspace:Raycast(position + waistOffset, direction * RAY_LENGTH, raycastParams)
 
     if result then
-        flags.a_slide = false
+        local object = result.Instance
 
-        return true
+        if object.CanCollide then
+            flags.a_slide = false
+        end
+
+        return object.CanCollide
     end
 
     return false
